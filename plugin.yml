@@ -1,0 +1,13 @@
+name: UndefinedWorld-1.16.5
+main: undefinedWorld.UndefinedWorld
+version: 1.0
+api-version: 1.16
+depend: [DoublePlugin-1.16.5, DoublePluginSkill-1.16.5]
+
+commands:  
+  stat: 
+    description: open stat gui
+    aliases: [ㄴㅅㅁㅅ, tmxpt, 스텟]
+  admin: 
+    description: administrator command
+    aliases: [괸리자, ㅁ으ㅑㅜ, rhksflwk]
