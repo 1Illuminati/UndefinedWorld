@@ -1,0 +1,11 @@
+name: UndefinedWorld
+version: 1.0-SNAPSHOT
+main: org.red.minecraft.undefinedworld.UndefinedWorldPlugin
+authors: [Inok, RedKiller, Double]
+api-version: 1.17
+depend:
+- CommediaDellarte
+
+commands:
+  test:
+    usage: "/test"

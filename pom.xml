@@ -5,24 +5,29 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.red.minecraft</groupId>
-    <artifactId>undefinedworld</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <artifactId>uw</artifactId>
+    <version>${uw.version}</version>
+    <packaging>pom</packaging>
     <name>UndefinedWorldPlugin</name>
 
+    <modules>
+        <module>core</module>
+        <module>item</module>
+    </modules>
+
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <spigot-api.version>1.21.4-R0.1-SNAPSHOT</spigot-api.version>
+        <java.version>25</java.version>
+        <maven.compiler.target>25</maven.compiler.target>
+        <maven.compiler.source>25</maven.compiler.source>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <papermc-api.version>26.1.2.build.66-stable</papermc-api.version>
+        <dellarte-api.version>3.1-SNAPSHOT</dellarte-api.version>
+        <uw.version>1.0-SNAPSHOT</uw.version>
     </properties>
 
     <build>
         <finalName>${project.name} ${project.version}</finalName>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.2.0</version>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -36,6 +41,14 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>3.1.1</version>
+                <configuration>
+                    <skip>false</skip>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
@@ -45,35 +58,36 @@
             <url>https://nexus.redkiller.org/repository/maven-snapshots/</url>
         </repository>
         <repository>
-            <id>spigot-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+            <id>papermc</id>
+            <url>https://repo.papermc.io/repository/maven-public/</url>
+        </repository>
+        <repository>
+            <id>nexomc-releases</id>
+            <name>Reposilite Repository</name>
+            <url>https://repo.nexomc.com/releases</url>
         </repository>
     </repositories>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>${spigot-api.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains</groupId>
-            <artifactId>annotations</artifactId>
-            <version>20.1.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.red.library</groupId>
-            <artifactId>data</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.red.minecraft.dellarte</groupId>
-            <artifactId>library</artifactId>
-            <version>3.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.jetbrains</groupId>
+                <artifactId>annotations</artifactId>
+                <version>20.1.0</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.papermc.paper</groupId>
+                <artifactId>paper-api</artifactId>
+                <version>${papermc-api.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.red.minecraft.dellarte</groupId>
+                <artifactId>library</artifactId>
+                <version>3.1-SNAPSHOT</version>
+                <scope>provided</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>
