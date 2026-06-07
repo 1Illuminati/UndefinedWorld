@@ -13,7 +13,7 @@ public class AttributeManager implements AttributeHolder {
         this.entity = entity;
     }
 
-    public A_Entity getPlayer() {
+    public A_Entity getEntity() {
         return entity;
     }
 

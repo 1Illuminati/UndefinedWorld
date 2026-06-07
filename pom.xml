@@ -13,6 +13,7 @@
     <modules>
         <module>core</module>
         <module>item</module>
+        <module>mob</module>
     </modules>
 
     <properties>
@@ -66,6 +67,12 @@
             <name>Reposilite Repository</name>
             <url>https://repo.nexomc.com/releases</url>
         </repository>
+        <repository>
+            <id>nexus</id>
+            <name>Lumine Releases</name>
+            <url>https://mvn.lumine.io/repository/maven-public/</url>
+        </repository>
+
     </repositories>
 
     <dependencyManagement>

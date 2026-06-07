@@ -1,10 +1,11 @@
-name: UndefinedWorldCore
+name: UndefinedWorldMob
 version: 1.0-SNAPSHOT
-main: org.red.minecraft.uw.core.UndefinedWorldCorePlugin
+main: org.red.minecraft.uw.mob.UndefinedWorldMobPlugin
 authors: [RedKiller]
 api-version: 26.1
 depend:
 - CommediaDellarte
+- UndefinedWorldCore
 
 commands:
   test:

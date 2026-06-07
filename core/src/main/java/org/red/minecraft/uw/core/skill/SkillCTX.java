@@ -8,6 +8,11 @@ public class SkillCTX {
 
     public SkillCTX(A_Entity caster) {
         this.setCTX(CTXType.CASTER, caster);
+
+        for (CTXType type : CTXType.values()) {
+            if (type.defaultValue != null)
+                setCTX(type, type.defaultValue);
+        }
     }
 
     public <T> void setCTX(CTXType type, T value) {

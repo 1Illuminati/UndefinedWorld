@@ -1,10 +1,11 @@
-name: UndefinedWorld
+name: UndefinedWorldItem
 version: 1.0-SNAPSHOT
-main: org.red.minecraft.undefinedworld.UndefinedWorldPlugin
-authors: [Inok, RedKiller, Double]
-api-version: 1.17
+main: org.red.minecraft.uw.item.UndefinedWorldItemPlugin
+authors: [RedKiller]
+api-version: 26.1
 depend:
 - CommediaDellarte
+- UndefinedWorldCore
 
 commands:
   test:

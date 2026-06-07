@@ -39,12 +39,10 @@ public record EntityTarget(Location center, int targetCount, double range, Bound
                         .limit(targetCount)
                         .toArray(Entity[]::new);
             }
-            case RANGE_SQUARE -> {
-                yield center.getWorld().getNearbyEntities(center, range, range, range).stream()
-                        .filter(e -> predicate == null || predicate.test(e))
-                        .limit(targetCount)
-                        .toArray(Entity[]::new);
-            }
+            case RANGE_SQUARE -> center.getWorld().getNearbyEntities(center, range, range, range).stream()
+                    .filter(e -> predicate == null || predicate.test(e))
+                    .limit(targetCount)
+                    .toArray(Entity[]::new);
             case BOX -> {
                 if (box == null || box.length == 0) yield new Entity[0];
 
