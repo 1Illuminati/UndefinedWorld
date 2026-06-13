@@ -3,6 +3,7 @@ package org.red.minecraft.uw.core.combat.damage;
 import org.bukkit.Bukkit;
 import org.red.minecraft.dellarte.library.entity.A_Entity;
 import org.red.minecraft.dellarte.library.entity.A_LivingEntity;
+import org.red.minecraft.uw.core.UndefinedWorldCorePlugin;
 import org.red.minecraft.uw.core.combat.CombatManager;
 import org.red.minecraft.uw.core.combat.damage.resolver.CriticalResolver;
 import org.red.minecraft.uw.core.combat.damage.resolver.DamageResolver;
@@ -22,18 +23,18 @@ public class DamageAtkProcess extends DamageProcess {
 
     @Override
     public void process() {
-        double damage = this.resolveDef(this.resolveAtk(this.getOriginDamage()));
+        double damage = this.resolveDef(this.resolveAtk(this.getOriginDamage(), getScale()));
         this.complete(new DamageInfo(damage, this.getType(), this.isCritical()));
     }
 
-    public double resolveAtk(double originDamage) {
+    public double resolveAtk(double originDamage, double scale) {
         DamageResolver atkResolver = CombatManager.getResolverByType(getAtkEntity(), this.getType());
 
         if (isCritical() && atkResolver instanceof CriticalResolver critResolver) {
-            return critResolver.resolveAtkCritDamage(originDamage);
+            return critResolver.resolveAtkCritDamage(originDamage, scale);
         }
 
-        return atkResolver.resolveAtkDamage(originDamage);
+        return atkResolver.resolveAtkDamage(originDamage, scale);
     }
 
     @Override
@@ -45,6 +46,8 @@ public class DamageAtkProcess extends DamageProcess {
 
         this.getDefEntity().setLastDamage(info.damage());
         this.getDefEntity().setLastDamageCause(event);
+        CombatManager.applyHitEffect(this.getDefEntity().getLivingEntity(), this.getAtkEntity().getLocation().toVector());
         this.getDefEntity().setHealth(Math.max(this.getDefEntity().getHealth() - info.damage(), 0));
+        UndefinedWorldCorePlugin.sendLog(event.getLoggerMessage());
     }
 }

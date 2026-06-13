@@ -1,6 +1,6 @@
 package org.red.minecraft.uw.core.skill;
 
-import org.bukkit.entity.LightningStrike;
+import org.jetbrains.annotations.Nullable;
 import org.red.minecraft.dellarte.library.entity.A_Entity;
 import org.red.minecraft.dellarte.library.entity.A_Player;
 import org.red.minecraft.dellarte.library.util.map.CoolTimeMap;
@@ -10,12 +10,54 @@ import org.red.minecraft.uw.core.skill.condition.Condition;
 import org.red.minecraft.uw.core.skill.cost.Cost;
 import org.red.minecraft.uw.core.skill.cost.CostData;
 import org.red.minecraft.uw.core.skill.cost.CostType;
+import org.red.minecraft.uw.core.skill.cost.ManaCost;
+import org.red.minecraft.uw.core.skill.effect.Effect;
 import org.red.minecraft.uw.core.skill.effect.EffectResult;
+import org.red.minecraft.uw.core.skill.effect.PierceIncreaseEffect;
+import org.red.minecraft.uw.core.skill.factory.DoubleSimpleFactory;
+import org.red.minecraft.uw.core.skill.factory.SkillFactory;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 public class SkillEngine {
+    private static final Map<String, SkillFactory<? extends Effect>> effectMap = new HashMap<>();
+    private static final Map<String, SkillFactory<? extends Condition>> conditionMap = new HashMap<>();
+    private static final Map<CostType, SkillFactory<? extends Cost<?>>> costMap = new HashMap<>();
+
+    @Nullable
+    public static SkillFactory<? extends Effect> getEffectFactory(String effectName) {
+        return effectMap.getOrDefault(effectName, null);
+    }
+
+    public static void setEffectFactory(SkillFactory<? extends Effect> effectFactory) {
+        effectMap.put(effectFactory.getID(), effectFactory);
+    }
+
+    public static boolean hasEffectFactory(String effectName) {
+        return effectMap.containsKey(effectName);
+    }
+
+    @Nullable
+    public static SkillFactory<? extends Condition> getConditionFactory(String conditionName) {
+        return conditionMap.getOrDefault(conditionName, null);
+    }
+
+    public static void setConditionFactory(SkillFactory<? extends Condition> conditionFactory) {
+        conditionMap.put(conditionFactory.getID(), conditionFactory);
+    }
+
+    public static boolean hasConditionFactory(String conditionName) {
+        return conditionMap.containsKey(conditionName);
+    }
+
+    @Nullable
+    public static SkillFactory<? extends Cost<?>> getCostFactory(CostType type) {
+        return costMap.get(type.name());
+    }
+
     public static void runSkill(A_Entity caster, SkillDefinition skill) {
         boolean isPlayer = caster instanceof A_Player;
         CostData costData = skill.getCostData();
@@ -90,5 +132,10 @@ public class SkillEngine {
                case ERROR -> UndefinedWorldCorePlugin.sendLog("Skill Error gear:" + node.gear().getID());
            }
         });
+    }
+
+    public static void setFactories() {
+        setEffectFactory(new DoubleSimpleFactory<>(PierceIncreaseEffect.class, "pierce_increase", "increase"));
+        costMap.put(CostType.MANA, new DoubleSimpleFactory<>(ManaCost.class, "mana", "value"));
     }
 }

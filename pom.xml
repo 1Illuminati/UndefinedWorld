@@ -6,7 +6,7 @@
 
     <groupId>org.red.minecraft</groupId>
     <artifactId>uw</artifactId>
-    <version>${uw.version}</version>
+    <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>UndefinedWorldPlugin</name>
 
@@ -72,7 +72,11 @@
             <name>Lumine Releases</name>
             <url>https://mvn.lumine.io/repository/maven-public/</url>
         </repository>
-
+        <repository>
+            <id>reposilite-repository-snapshots</id>
+            <name>Reposilite Repository</name>
+            <url>https://repo.triumphteam.dev/snapshots</url>
+        </repository>
     </repositories>
 
     <dependencyManagement>

@@ -23,10 +23,10 @@ public abstract class DamageResolver {
     public abstract double resolveDefDamage(double originDamage);
 
     /**
-     * 플레이어가 해당 데미지로 공격할때 추가적인 계산이 들어가는 함수
-     * 기본 데미지취급이 공격력에 몇% 로 취급하기 때문에 베이스데미지는 %로 들어간다
-     * @param originDamage 해당 공격에 베이스 공격력 (%)
+     *
+     * @param originDamage 해당 공격에 기본 공격력
+     * @param scale 해당 공격의 배율
      * @return 공격력 연산이 끝난 후 최종적으로 플레이어가 주는 데미지
      */
-    public abstract double resolveAtkDamage(double originDamage);
+    public abstract double resolveAtkDamage(double originDamage, double scale);
 }

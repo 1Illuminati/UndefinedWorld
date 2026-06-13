@@ -45,6 +45,8 @@ public final class UndefinedWorldCore {
     }
 
     public static AttributeHolder getAttributeHolder(A_Entity entity) {
-        return mobModule.getAttributeHolder(entity);
+        AttributeHolder result = mobModule.getAttributeHolder(entity);
+        UndefinedWorldCorePlugin.sendLog(result.getClass().getSimpleName());
+        return result;
     }
 }

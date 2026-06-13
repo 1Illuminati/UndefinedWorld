@@ -6,9 +6,6 @@ import org.red.minecraft.uw.core.UndefinedWorldCorePlugin;
 import org.red.minecraft.uw.core.attribute.AttributeHolder;
 import org.red.minecraft.uw.core.attribute.AttributeType;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 /**
  * 플레이어용 함수 모아두는 클래스
  */
@@ -24,17 +21,17 @@ public final class PlayerHelper implements AttributeHolder {
 
     @Override
     public double getAttributeValue(AttributeType type) {
-        return this.getDataMap().getDouble(type.toString());
+        return this.getDataMap().getDouble(type.name());
     }
 
     @Override
     public void setAttributeValue(AttributeType type, double value) {
-        this.getDataMap().put(type.toString(), value);
+        this.getDataMap().put(type.name(), value);
     }
 
     @Override
     public boolean hasAttributeValue(AttributeType type) {
-        return this.getDataMap().containsKey(type.toString());
+        return this.getDataMap().containsKey(type.name());
     }
 
     public A_DataMap getDataMap() {

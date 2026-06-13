@@ -11,7 +11,7 @@ public enum U_ItemType {
     ACCESSORY,
     SCROLL,
     SPECIAL,
-    SKILL_RUNE,
+    GEAR,
     SKILL_ARTIFACT,
     TOOL
 }

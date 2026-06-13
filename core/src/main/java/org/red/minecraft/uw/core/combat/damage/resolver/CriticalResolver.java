@@ -3,7 +3,6 @@ package org.red.minecraft.uw.core.combat.damage.resolver;
 import org.red.minecraft.dellarte.library.entity.A_Entity;
 import org.red.minecraft.uw.core.UndefinedWorldCore;
 import org.red.minecraft.uw.core.attribute.AttributeHolder;
-import org.red.minecraft.uw.core.attribute.AttributeManager;
 import org.red.minecraft.uw.core.attribute.AttributeType;
 
 public abstract class CriticalResolver extends DamageResolver {
@@ -26,10 +25,10 @@ public abstract class CriticalResolver extends DamageResolver {
         return (damage - finalDef) * finalRes;
     }
 
-    public double resolveAtkCritDamage(double baseDamage) {
+    public double resolveAtkCritDamage(double originDamage, double scale) {
         AttributeHolder holder = UndefinedWorldCore.getAttributeHolder(this.getEntity());
 
-        double damage = this.resolveAtkDamage(baseDamage);
+        double damage = this.resolveAtkDamage(originDamage, scale);
         double cri = holder.getAttributeValue(AttributeType.CRITICAL_DAMAGE);
         double criReduce = holder.getAttributeValue(AttributeType.CRITICAL_DAMAGE_REDUCE);
         double mul = holder.getAttributeValue(AttributeType.CRITICAL_DAMAGE_MUTIPLY);

@@ -10,7 +10,7 @@
   <groupId>org.red.minecraft.uw</groupId>
   <artifactId>mob</artifactId>
   <packaging>jar</packaging>
-  <name>UndefinedWorldPlugin Item</name>
+  <name>UndefinedWorldPlugin Mob</name>
 
   <build>
     <plugins>
