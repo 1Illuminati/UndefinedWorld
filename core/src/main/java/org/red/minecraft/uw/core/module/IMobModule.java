@@ -2,7 +2,7 @@ package org.red.minecraft.uw.core.module;
 
 import org.bukkit.entity.Entity;
 import org.red.minecraft.dellarte.library.entity.A_Entity;
-import org.red.minecraft.uw.core.attribute.AttributeHolder;
+import org.red.minecraft.uw.core.attribute.AttributeManager;
 
 public interface IMobModule extends IModule {
     /**
@@ -24,5 +24,5 @@ public interface IMobModule extends IModule {
     boolean isDamageableMob(A_Entity entity);
     boolean isDamageableMob(Entity entity);
 
-    AttributeHolder getAttributeHolder(A_Entity entity);
+    AttributeManager getAttributeHolder(A_Entity entity);
 }

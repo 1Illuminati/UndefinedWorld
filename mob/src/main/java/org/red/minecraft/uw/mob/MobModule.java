@@ -5,11 +5,10 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.red.minecraft.dellarte.library.entity.A_Entity;
 import org.red.minecraft.dellarte.library.entity.A_Player;
-import org.red.minecraft.uw.core.attribute.AttributeHolder;
 import org.red.minecraft.uw.core.attribute.AttributeManager;
 import org.red.minecraft.uw.core.module.IMobModule;
 import org.red.minecraft.uw.core.player.PlayerHelper;
-import org.red.minecraft.uw.mob.attribute.MythicAttributeHolder;
+import org.red.minecraft.uw.mob.attribute.MythicAttributeManager;
 
 public class MobModule implements IMobModule {
     @Override
@@ -33,9 +32,9 @@ public class MobModule implements IMobModule {
     }
 
     @Override
-    public AttributeHolder getAttributeHolder(A_Entity entity) {
+    public AttributeManager getAttributeHolder(A_Entity entity) {
         if (entity instanceof A_Player player) return new PlayerHelper(player);
-        else if (isMythicMob(entity)) return new MythicAttributeHolder(MythicBukkit.inst().getMobManager().getMythicMobInstance(entity.getEntity()));
+        else if (isMythicMob(entity)) return new MythicAttributeManager(MythicBukkit.inst().getMobManager().getMythicMobInstance(entity.getEntity()));
         return new AttributeManager(entity);
     }
 }

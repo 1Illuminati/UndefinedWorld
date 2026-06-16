@@ -3,11 +3,14 @@ package org.red.minecraft.uw.core;
 import org.bukkit.entity.Entity;
 import org.red.minecraft.dellarte.library.entity.A_Entity;
 import org.red.minecraft.uw.core.attribute.AttributeHolder;
+import org.red.minecraft.uw.core.attribute.AttributeManager;
+import org.red.minecraft.uw.core.combat.buff.BuffManager;
 import org.red.minecraft.uw.core.module.IItemModule;
 import org.red.minecraft.uw.core.module.IMobModule;
 import org.red.minecraft.uw.core.module.IModule;
 
 public final class UndefinedWorldCore {
+    private static final BuffManager buffManager = new BuffManager(UndefinedWorldCorePlugin.instance);
     private static IMobModule mobModule;
     private static IItemModule itemModule;
     public static void registerModule(IModule module) {
@@ -44,8 +47,12 @@ public final class UndefinedWorldCore {
         return mobModule.isDamageableMob(entity);
     }
 
-    public static AttributeHolder getAttributeHolder(A_Entity entity) {
-        AttributeHolder result = mobModule.getAttributeHolder(entity);
+    public static BuffManager getBuffManager() {
+        return buffManager;
+    }
+
+    public static AttributeManager getAttributeHolder(A_Entity entity) {
+        AttributeManager result = mobModule.getAttributeHolder(entity);
         UndefinedWorldCorePlugin.sendLog(result.getClass().getSimpleName());
         return result;
     }
