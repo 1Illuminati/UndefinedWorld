@@ -1,7 +1,6 @@
 package org.red.minecraft.uw.core.attribute;
 
 import org.red.minecraft.dellarte.library.entity.A_Entity;
-import org.red.minecraft.dellarte.library.entity.A_LivingEntity;
 import org.red.minecraft.dellarte.library.util.A_DataMap;
 import org.red.minecraft.uw.core.UndefinedWorldCorePlugin;
 
@@ -34,17 +33,18 @@ public class AttributeManager {
         containerMap.computeIfAbsent(cType, c -> new AttributeContainer(getEntity(), c)).setAttributeValue(aType, value);
     }
 
+    public void addBaseAttributeValue(AttributeType aType, ContainerType cType, double value) {
+        this.setBaseAttributeValue(aType, cType, value + getBaseAttributeValue(aType, cType));
+    }
+
     /**
      * 최종적으로 계산에 사용되는 attribute값을 가져올때 사용
      * LivingEntity일 경우 체력은 다르게 처리 된다
+     *
      * @param aType 가져올 attributeType
      * @return 최종값
      */
     public double getAttributeValue(AttributeType aType) {
-
-        if (this.entity instanceof A_LivingEntity livingEntity && aType == AttributeType.HEALTH)
-            return livingEntity.getHealth();
-
         double result = 0;
 
         for (AttributeContainer c : containerMap.values()) {

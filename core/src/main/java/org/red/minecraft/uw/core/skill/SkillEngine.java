@@ -7,10 +7,7 @@ import org.red.minecraft.dellarte.library.util.map.CoolTimeMap;
 import org.red.minecraft.uw.core.UndefinedWorldCorePlugin;
 import org.red.minecraft.uw.core.exeception.CannotPayCostException;
 import org.red.minecraft.uw.core.skill.condition.Condition;
-import org.red.minecraft.uw.core.skill.cost.Cost;
-import org.red.minecraft.uw.core.skill.cost.CostData;
-import org.red.minecraft.uw.core.skill.cost.CostType;
-import org.red.minecraft.uw.core.skill.cost.ManaCost;
+import org.red.minecraft.uw.core.skill.cost.*;
 import org.red.minecraft.uw.core.skill.effect.Effect;
 import org.red.minecraft.uw.core.skill.effect.EffectResult;
 import org.red.minecraft.uw.core.skill.effect.PierceIncreaseEffect;
@@ -137,5 +134,7 @@ public class SkillEngine {
     public static void setFactories() {
         setEffectFactory(new DoubleSimpleFactory<>(PierceIncreaseEffect.class, "pierce_increase", "increase"));
         costMap.put(CostType.MANA, new DoubleSimpleFactory<>(ManaCost.class, "mana", "value"));
+        costMap.put(CostType.HEALTH, new DoubleSimpleFactory<>(HealthCost.class, "health", "value"));
+        costMap.put(CostType.STAMINA, new DoubleSimpleFactory<>(StaminaCost.class, "stamina", "value"));
     }
 }

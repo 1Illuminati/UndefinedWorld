@@ -1,6 +1,5 @@
 package org.red.minecraft.uw.core.combat.buff;
 
-import org.red.minecraft.dellarte.library.entity.A_Entity;
 import org.red.minecraft.uw.core.attribute.AttributeType;
 
 public class PhysicalDamageBuff extends AttributeBuff {

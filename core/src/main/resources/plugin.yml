@@ -7,5 +7,4 @@ depend:
 - CommediaDellarte
 
 commands:
-  test:
-    usage: "/test"
+  stat:

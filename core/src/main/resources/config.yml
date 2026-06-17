@@ -1,0 +1,32 @@
+StatSetting:
+# 근력
+  STR:
+    PHYSICS_DAMAGE: 15
+    STAMINA_MAX: 25
+# 민첩
+  AGI:
+    SPEED: 1
+    DODGE: 1
+    STAMINA_REGEN: 1
+# 체력
+  HEL:
+    HEALTH_MAX: 60
+    HEALTH_REGEN: 3
+    STAMINA_MAX: 20
+# 집중
+  FOC:
+    CRITICAL_CHANCE: 1
+    CRITICAL_DAMAGE: 1
+# 지식
+  KNO:
+    MAGIC_DAMAGE: 15
+    MANA_MAX: 25
+# 지혜
+  WIS:
+    MANA_REGEN: 1
+    MANA_MAX: 50
+# 정신
+  SPI:
+    MANA_REGEN: 2
+    HEALTH_REGEN: 3
+    STAMINA_REGEN: 2

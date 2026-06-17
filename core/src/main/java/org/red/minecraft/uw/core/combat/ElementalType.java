@@ -10,6 +10,7 @@ package org.red.minecraft.uw.core.combat;
  * todo 2. 단순히 낮고 회전율 높은 스킬로 속성 효과만 노릴수 있으니 스킬 무게 비례 확률 처리가 필요
  */
 public enum ElementalType {
+    NONE,
     /**
      * 모든 유형의 화염속성 데미지 처리후에는 데미지를 입은 객체에게 화상 디버프를 부여한다
      * 화상 디버프는 기존 화염물리, 화염마법 데미지와 같은 유형이 아닌 다른 독자적인

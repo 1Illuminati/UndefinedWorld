@@ -1,22 +1,20 @@
 package org.red.minecraft.uw.core.skill.cost;
 
 import org.red.minecraft.dellarte.library.entity.A_Entity;
-import org.red.minecraft.dellarte.library.entity.A_Player;
-import org.red.minecraft.uw.core.UndefinedWorldCore;
-import org.red.minecraft.uw.core.attribute.AttributeHolder;
-import org.red.minecraft.uw.core.attribute.AttributeManager;
-import org.red.minecraft.uw.core.attribute.AttributeType;
+import org.red.minecraft.dellarte.library.entity.A_LivingEntity;
+import org.red.minecraft.uw.core.combat.CombatManager;
+import org.red.minecraft.uw.core.combat.damage.DamageType;
 import org.red.minecraft.uw.core.exeception.CannotPayCostException;
-import org.red.minecraft.uw.core.player.PlayerHelper;
 
-public class ManaCost implements Cost<Double> {
+public class HealthCost implements Cost<Double>{
     private final double value;
-    public ManaCost(double value) {
+    public HealthCost(double value) {
         this.value = value;
     }
+
     @Override
     public CostType getType() {
-        return CostType.MANA;
+        return CostType.HEALTH;
     }
 
     @Override
@@ -31,21 +29,19 @@ public class ManaCost implements Cost<Double> {
 
     @Override
     public void payCost(A_Entity entity) throws CannotPayCostException {
-        payCost(entity, this.getValue());
+        this.payCost(entity, this.getValue());
     }
 
     @Override
     public boolean hasCost(A_Entity entity, Double cost) {
-        if (!(entity instanceof A_Player player)) return true;
-
-        return new PlayerHelper(player).getMana() >= cost;
+        if (!(entity instanceof A_LivingEntity livingEntity)) return false;
+        return livingEntity.getHealth() > this.getValue();
     }
 
     @Override
     public void payCost(A_Entity entity, Double cost) throws CannotPayCostException {
-        if (!(entity instanceof A_Player player)) return;
         if (!hasCost(entity, cost)) throw new CannotPayCostException(this);
-        else new PlayerHelper(player).addStamina(-cost);
+        CombatManager.damage(entity.getALivingEntity(), DamageType.COST, cost);
     }
 
     @Override

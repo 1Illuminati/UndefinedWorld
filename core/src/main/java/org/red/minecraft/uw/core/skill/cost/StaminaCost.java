@@ -2,21 +2,17 @@ package org.red.minecraft.uw.core.skill.cost;
 
 import org.red.minecraft.dellarte.library.entity.A_Entity;
 import org.red.minecraft.dellarte.library.entity.A_Player;
-import org.red.minecraft.uw.core.UndefinedWorldCore;
-import org.red.minecraft.uw.core.attribute.AttributeHolder;
-import org.red.minecraft.uw.core.attribute.AttributeManager;
-import org.red.minecraft.uw.core.attribute.AttributeType;
 import org.red.minecraft.uw.core.exeception.CannotPayCostException;
 import org.red.minecraft.uw.core.player.PlayerHelper;
 
-public class ManaCost implements Cost<Double> {
+public class StaminaCost implements Cost<Double> {
     private final double value;
-    public ManaCost(double value) {
+    public StaminaCost(double value) {
         this.value = value;
     }
     @Override
     public CostType getType() {
-        return CostType.MANA;
+        return CostType.STAMINA;
     }
 
     @Override
@@ -38,7 +34,7 @@ public class ManaCost implements Cost<Double> {
     public boolean hasCost(A_Entity entity, Double cost) {
         if (!(entity instanceof A_Player player)) return true;
 
-        return new PlayerHelper(player).getMana() >= cost;
+        return new PlayerHelper(player).getStamina() >= cost;
     }
 
     @Override

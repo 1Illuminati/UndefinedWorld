@@ -2,7 +2,6 @@ package org.red.minecraft.uw.core;
 
 import org.bukkit.entity.Entity;
 import org.red.minecraft.dellarte.library.entity.A_Entity;
-import org.red.minecraft.uw.core.attribute.AttributeHolder;
 import org.red.minecraft.uw.core.attribute.AttributeManager;
 import org.red.minecraft.uw.core.combat.buff.BuffManager;
 import org.red.minecraft.uw.core.module.IItemModule;
@@ -51,7 +50,7 @@ public final class UndefinedWorldCore {
         return buffManager;
     }
 
-    public static AttributeManager getAttributeHolder(A_Entity entity) {
+    public static AttributeManager getAttributeManager(A_Entity entity) {
         AttributeManager result = mobModule.getAttributeHolder(entity);
         UndefinedWorldCorePlugin.sendLog(result.getClass().getSimpleName());
         return result;

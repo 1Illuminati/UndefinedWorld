@@ -1,6 +1,11 @@
 package org.red.minecraft.uw.core.attribute;
 
-public enum AttributeType {
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
+
+public enum AttributeType implements ConfigurationSerializable {
     PHYSICS_DAMAGE("물리공격력"),
     PHYSICS_DAMAGE_DEFENSE("물리방어력"),
     PHYSICS_DAMAGE_RESISTANCE("물리저항력"),
@@ -18,7 +23,6 @@ public enum AttributeType {
     MAGIC_DAMAGE_MULTIPLY_REDUCE("마법공격력 증폭 감소"),
     MAGIC_DAMAGE_DEFENSE_REDUCE("마법방어력 감소"),
     MAGIC_DAMAGE_RESISTANCE_REDUCE("마법저항력 감소"),
-
 
     ELEMENT_DAMAGE("속성공격력"),
     ELEMENT_DAMAGE_DEFENSE("속성방어력"),
@@ -39,7 +43,6 @@ public enum AttributeType {
     TRUE_DAMAGE_MULTIPLY("고정공격력 증폭"),
     HEALTH_TRUE_DAMAGE("체력비례 고정공격력"),
 
-    HEALTH("체력"),
     HEALTH_MAX("최대 체력"),
     HEALTH_MULTIPLY("체력 증폭"),
     HEALTH_DIVIDE("체력 감소"),
@@ -47,7 +50,6 @@ public enum AttributeType {
     HEALTH_REGEN_REDUCE("체력 재생 감소"),
     HEALTH_USE_LESS("체력 소모량 감소"),
     HEALTH_USE_MORE("체력 소모량 증가"),
-    MANA("마나"),
     MANA_MAX("최대 마나"),
     MANA_MULTIPLY("마나 증폭"),
     MANA_DIVIDE("마나 감소"),
@@ -55,7 +57,6 @@ public enum AttributeType {
     MANA_REGEN_REDUCE("마나 재생 감소"),
     MANA_USE_LESS("마나 소모량 감소"),
     MANA_USE_MORE("마나 소모량 증가"),
-    STAMINA("스테미나"),
     STAMINA_MAX("최대 스테미나"),
     STAMINA_MULTIPLY("스테미나 증폭"),
     STAMINA_DIVIDE("스테미나 감소"),
@@ -75,7 +76,7 @@ public enum AttributeType {
     ALL_DEFENSE("절대 방어력"),
     ALL_RESISTANCE("절대 저항력"),
     ALL_DAMAGE("절대 공격력"),
-    ALL_DAMAGE_MULTILY("절대 공격력 증폭"),
+    ALL_DAMAGE_MULTIPLY("절대 공격력 증폭"),
 
     FIRE_DAMAGE("화염공격력"),
     FIRE_DAMAGE_DEFENSE("화염방어력"),
@@ -133,11 +134,11 @@ public enum AttributeType {
     CRITICAL_CHANCE_DIVIDE("치명타 확률 감소"),
     CRITICAL_DAMAGE("치명타 공격력"),
     CRITICAL_RESISTANCE("치명타 저항력"),
-    CRITICAL_DAMAGE_MUTIPLY("치명타 공격력 증폭"),
+    CRITICAL_DAMAGE_MULTIPLY("치명타 공격력 증폭"),
     CRITICAL_DAMAGE_REDUCE("치명타 공격력 감소"),
     CRITICAL_DAMAGE_DEFENSE("치명타 공격력 방어력"),
     CRITICAL_DAMAGE_RESISTANCE("치명타 공격력 저항력"),
-    CRITICAL_DAMAGE_MUTIPLY_REDUCE("치명타 공격력 증폭"),
+    CRITICAL_DAMAGE_MULTIPLY_REDUCE("치명타 공격력 증폭"),
     CRITICAL_DAMAGE_DEFENSE_REDUCE("치명타 공격력 방어력"),
     CRITICAL_DAMAGE_RESISTANCE_REDUCE("치명타 공격력 저항력"),
 
@@ -156,5 +157,15 @@ public enum AttributeType {
     public final String krName;
     AttributeType(String krName) {
         this.krName = krName;
+    }
+
+
+    @Override
+    public @NotNull Map<String, Object> serialize() {
+        return Map.of("name", this.name());
+    }
+
+    public static AttributeType deserialize(Map<String, Object> map) {
+        return AttributeType.valueOf((String) map.get("name"));
     }
 }
