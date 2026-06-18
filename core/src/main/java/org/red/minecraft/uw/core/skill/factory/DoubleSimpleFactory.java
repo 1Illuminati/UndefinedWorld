@@ -1,7 +1,6 @@
 package org.red.minecraft.uw.core.skill.factory;
 
 import org.bukkit.configuration.ConfigurationSection;
-import org.red.minecraft.uw.core.skill.SkillEngine;
 
 /**
  * 인스터스가 double 변수 하나만을 요구할때 사용하는 매우 간단하게 쓰는용도

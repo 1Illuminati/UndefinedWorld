@@ -6,6 +6,7 @@ api-version: 26.1
 depend:
 - CommediaDellarte
 - UndefinedWorldCore
+- Nexo
 
 commands:
   test:

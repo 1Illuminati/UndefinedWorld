@@ -2,11 +2,11 @@ package org.red.minecraft.uw.core.attribute.stat;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.Nullable;
+import org.red.minecraft.uw.core.UndefinedWorldCorePlugin;
 import org.red.minecraft.uw.core.attribute.AttributeType;
 import org.red.minecraft.uw.core.attribute.AttributeViewer;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public record Stat(String name, Map<AttributeType, Double> map) implements AttributeViewer {
     private static final Map<String, Stat> defaultMap = new HashMap<>();
@@ -18,8 +18,6 @@ public record Stat(String name, Map<AttributeType, Double> map) implements Attri
     public static Stat FOC;
     public static Stat KNO;
     public static Stat SPI;
-    public static Stat[] values;
-
 
     @Override
     public double getAttributeValue(AttributeType type) {
@@ -35,7 +33,16 @@ public record Stat(String name, Map<AttributeType, Double> map) implements Attri
         return defaultMap.getOrDefault(name, null);
     }
 
+    public static Collection<Stat> stats() {
+        return defaultMap.values();
+    }
+
+    public static Set<String> statKeys() {
+        return defaultMap.keySet();
+    }
+
     public static void configSet(ConfigurationSection section) {
+        UndefinedWorldCorePlugin.sendLog("Stat set Start");
         for (String key : section.getKeys(false)) {
             ConfigurationSection attSection = section.getConfigurationSection(key);
             Map<AttributeType, Double> attMap = new HashMap<>();
@@ -45,6 +52,7 @@ public record Stat(String name, Map<AttributeType, Double> map) implements Attri
                 attMap.put(type, value);
             }
 
+            UndefinedWorldCorePlugin.sendLog(key + " set Complete");
             defaultMap.put(key, new Stat(key, attMap));
         }
 
@@ -55,6 +63,5 @@ public record Stat(String name, Map<AttributeType, Double> map) implements Attri
         FOC = defaultMap.get("FOC");
         KNO = defaultMap.get("KNO");
         SPI = defaultMap.get("SPI");
-        values = new Stat[]{STR, AGI, HEL, WIS, FOC, KNO, SPI};
     }
 }

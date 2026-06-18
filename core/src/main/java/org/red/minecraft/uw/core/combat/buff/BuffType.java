@@ -12,7 +12,6 @@ import java.util.function.Function;
  */
 public enum BuffType implements ConfigurationSerializable {
     ATTRIBUTE_BUFF(AttributeBuff::new),
-    PHYSICAL_DAMAGE_BUFF(PhysicalDamageBuff::new),
     REGENERATION(RegenerationBuff::new),
     POISON(PoisonBuff::new),
     GLOWING(GlowingBuff::new);

@@ -2,10 +2,6 @@ package org.red.minecraft.uw.core.skill.cost;
 
 import org.red.minecraft.dellarte.library.entity.A_Entity;
 import org.red.minecraft.dellarte.library.entity.A_Player;
-import org.red.minecraft.uw.core.UndefinedWorldCore;
-import org.red.minecraft.uw.core.attribute.AttributeHolder;
-import org.red.minecraft.uw.core.attribute.AttributeManager;
-import org.red.minecraft.uw.core.attribute.AttributeType;
 import org.red.minecraft.uw.core.exeception.CannotPayCostException;
 import org.red.minecraft.uw.core.player.PlayerHelper;
 

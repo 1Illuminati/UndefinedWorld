@@ -5,6 +5,7 @@ import org.bukkit.damage.DamageSource;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.red.minecraft.dellarte.library.entity.A_LivingEntity;
+import org.red.minecraft.uw.core.UndefinedWorldCorePlugin;
 import org.red.minecraft.uw.core.combat.CombatManager;
 import org.red.minecraft.uw.core.combat.ElementalType;
 import org.red.minecraft.uw.core.combat.damage.DamageCTX;
@@ -35,6 +36,7 @@ public class DamageProcess {
         DamageCTX resultCTX = DamageModifierBus.create(this.originCTX.copy()).flush();
         EntityDamageEvent event = this.createEvent(resultCTX);
         setEvent(event);
+        UndefinedWorldCorePlugin.sendLog(resultCTX.toString());
     }
 
     protected void setEvent(EntityDamageEvent event) {
@@ -48,7 +50,6 @@ public class DamageProcess {
         CombatManager.applyHitEffect(livingEntity, event.getDamageSource().getSourceLocation());
         livingEntity.setHealth(Math.max(livingEntity.getHealth() - event.getDamage(), 0));
     }
-
 
     protected EntityDamageEvent createEvent(DamageCTX ctx) {
         DamageSource source = ctx.source().getMinecraftDamageSource();

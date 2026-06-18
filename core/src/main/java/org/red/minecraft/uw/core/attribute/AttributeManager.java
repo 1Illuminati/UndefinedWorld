@@ -2,6 +2,7 @@ package org.red.minecraft.uw.core.attribute;
 
 import org.red.minecraft.dellarte.library.entity.A_Entity;
 import org.red.minecraft.dellarte.library.util.A_DataMap;
+import org.red.minecraft.uw.core.StaticValue;
 import org.red.minecraft.uw.core.UndefinedWorldCorePlugin;
 
 import java.util.HashMap;
@@ -47,17 +48,19 @@ public class AttributeManager {
     public double getAttributeValue(AttributeType aType) {
         double result = 0;
 
-        for (AttributeContainer c : containerMap.values()) {
-            result += c.getAttributeValue(aType);
+        for (ContainerType cType : ContainerType.values()) {
+            result += getBaseAttributeValue(aType, cType);
         }
 
         return result;
     }
 
-    protected record AttributeContainer(A_Entity entity, ContainerType type) implements AttributeHolder {
+    protected record AttributeContainer(A_Entity entity, ContainerType cType) implements AttributeHolder {
         @Override
         public double getAttributeValue(AttributeType type) {
-            if (!hasAttributeValue(type)) return 0;
+            if (!hasAttributeValue(type)) {
+                return 0;
+            }
 
             return this.getDataMap().getDouble(type.name());
         }
@@ -73,7 +76,7 @@ public class AttributeManager {
         }
 
         public A_DataMap getDataMap() {
-            return entity.getDataMap(UndefinedWorldCorePlugin.instance).getDataMap(type.name());
+            return entity.getDataMap(UndefinedWorldCorePlugin.instance).getDataMap(StaticValue.ATTRIBUTE_CONTAINER_KEY + cType.name());
         }
     }
 

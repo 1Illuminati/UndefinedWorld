@@ -9,9 +9,9 @@ import org.red.minecraft.uw.core.UndefinedWorldCore;
 import org.red.minecraft.uw.core.attribute.AttributeManager;
 import org.red.minecraft.uw.core.attribute.AttributeType;
 import org.red.minecraft.uw.core.combat.damage.DamageSource;
+import org.red.minecraft.uw.core.combat.damage.DamageType;
 import org.red.minecraft.uw.core.combat.damage.process.DamageAtkProcess;
 import org.red.minecraft.uw.core.combat.damage.process.DamageProcess;
-import org.red.minecraft.uw.core.combat.damage.DamageType;
 
 public final class CombatManager {
     public static void damage(DamageProcess process) {

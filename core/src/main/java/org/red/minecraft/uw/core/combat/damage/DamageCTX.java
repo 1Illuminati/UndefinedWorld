@@ -1,12 +1,10 @@
 package org.red.minecraft.uw.core.combat.damage;
 
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.Nullable;
 import org.red.minecraft.dellarte.library.entity.A_Entity;
 import org.red.minecraft.dellarte.library.entity.A_LivingEntity;
+import org.red.minecraft.dellarte.library.entity.A_Player;
 import org.red.minecraft.uw.core.combat.ElementalType;
-
-import java.util.Objects;
 
 public class DamageCTX {
     private final DamageSource damageSource;
@@ -67,6 +65,20 @@ public class DamageCTX {
 
     public DamageCTX copy() {
         return new DamageCTX(damageSource, type, elementalType, originDamage, scale, isCritical);
+    }
+
+    @Override
+    public String toString() {
+        return "DamageCTX{" +
+                "type=" + type +
+                ", elementalType=" + elementalType +
+                ", originDamage=" + originDamage +
+                ", damage=" + damage +
+                ", scale=" + scale +
+                ", isCritical=" + isCritical +
+                ", attacker=" + (!hasAttacker() ? "null" : attacker() instanceof A_Player ? attacker().getName() : attacker().getUniqueIdStr()) +
+                ", defender=" + (defender() instanceof A_Player ? defender().getName() : defender().getUniqueIdStr()) +
+                '}';
     }
 
     private static final class FixDamageCTX extends DamageCTX {

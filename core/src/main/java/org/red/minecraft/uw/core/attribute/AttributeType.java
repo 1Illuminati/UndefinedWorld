@@ -168,4 +168,12 @@ public enum AttributeType implements ConfigurationSerializable {
     public static AttributeType deserialize(Map<String, Object> map) {
         return AttributeType.valueOf((String) map.get("name"));
     }
+
+    public static AttributeType byName(String name) {
+        try {
+            return AttributeType.valueOf(name);
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
 }

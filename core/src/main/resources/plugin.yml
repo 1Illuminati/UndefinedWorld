@@ -5,6 +5,7 @@ authors: [RedKiller]
 api-version: 26.1
 depend:
 - CommediaDellarte
+- PlaceholderAPI
 
 commands:
   stat:

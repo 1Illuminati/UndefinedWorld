@@ -5,6 +5,8 @@ import org.bukkit.damage.DamageType;
 import org.jetbrains.annotations.Nullable;
 import org.red.minecraft.dellarte.library.entity.A_Entity;
 import org.red.minecraft.dellarte.library.entity.A_LivingEntity;
+import org.red.minecraft.uw.core.UndefinedWorldCore;
+import org.red.minecraft.uw.core.UndefinedWorldCorePlugin;
 
 public final class DamageSource {
     private final A_Entity attacker;
@@ -60,9 +62,11 @@ public final class DamageSource {
     public org.bukkit.damage.DamageSource getMinecraftDamageSource() {
         org.bukkit.damage.DamageSource.Builder builder = org.bukkit.damage.DamageSource.builder(DamageType.GENERIC).withDamageLocation(this.damageLocation);
 
-        if (this.realAttacker != null) builder.withDirectEntity(this.realAttacker.getEntity());
-        if (hasAttacker()) builder.withCausingEntity(this.attacker.getEntity());
+        if (hasAttacker()) {
+            builder.withCausingEntity(this.attacker.getEntity()).withDirectEntity(this.realAttacker == null ? this.attacker.getEntity() : this.realAttacker.getEntity());
+        }
 
+        UndefinedWorldCorePlugin.sendLog(String.format("CausingEntity:%b, DirectEntity%b", hasAttacker(), this.realAttacker != null));
         return builder.build();
     }
 }
