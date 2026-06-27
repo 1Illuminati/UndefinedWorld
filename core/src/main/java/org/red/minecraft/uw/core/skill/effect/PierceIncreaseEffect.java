@@ -17,9 +17,4 @@ public class PierceIncreaseEffect implements Effect{
         ctx.setCTX(CTXType.PIERCE, pierce + this.increase);
         return CompletableFuture.completedFuture(EffectResult.SUCCESS);
     }
-
-    @Override
-    public String getID() {
-        return "pierce_increase";
-    }
 }

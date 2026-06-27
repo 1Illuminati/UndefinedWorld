@@ -1,11 +1,6 @@
 package org.red.minecraft.uw.core.attribute;
 
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Map;
-
-public enum AttributeType implements ConfigurationSerializable {
+public enum AttributeType {
     PHYSICS_DAMAGE("물리공격력"),
     PHYSICS_DAMAGE_DEFENSE("물리방어력"),
     PHYSICS_DAMAGE_RESISTANCE("물리저항력"),
@@ -157,16 +152,6 @@ public enum AttributeType implements ConfigurationSerializable {
     public final String krName;
     AttributeType(String krName) {
         this.krName = krName;
-    }
-
-
-    @Override
-    public @NotNull Map<String, Object> serialize() {
-        return Map.of("name", this.name());
-    }
-
-    public static AttributeType deserialize(Map<String, Object> map) {
-        return AttributeType.valueOf((String) map.get("name"));
     }
 
     public static AttributeType byName(String name) {

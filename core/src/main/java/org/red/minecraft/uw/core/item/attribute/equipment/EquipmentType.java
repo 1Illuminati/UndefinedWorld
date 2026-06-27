@@ -24,5 +24,5 @@ public enum EquipmentType {
     BOW,
     CROSSBOW,
     GUN,
-    SNIPER,
+    SNIPER;
 }

@@ -17,9 +17,4 @@ public class SizeIncreaseEffect implements Effect{
         ctx.setCTX(CTXType.SIZE, size + this.increase);
         return CompletableFuture.completedFuture(EffectResult.SUCCESS);
     }
-
-    @Override
-    public String getID() {
-        return "size_increase";
-    }
 }

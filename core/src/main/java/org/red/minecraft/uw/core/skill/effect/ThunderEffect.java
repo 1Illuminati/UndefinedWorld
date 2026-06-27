@@ -9,9 +9,4 @@ public class ThunderEffect implements Effect{
     public CompletableFuture<EffectResult> execute(SkillCTX ctx) {
         return null;
     }
-
-    @Override
-    public String getID() {
-        return "thunder";
-    }
 }

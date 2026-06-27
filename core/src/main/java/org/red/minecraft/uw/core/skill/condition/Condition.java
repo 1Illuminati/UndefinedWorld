@@ -1,8 +1,7 @@
 package org.red.minecraft.uw.core.skill.condition;
 
 import org.red.minecraft.uw.core.skill.SkillCTX;
-import org.red.minecraft.uw.core.util.HasID;
 
-public interface Condition extends HasID {
+public interface Condition {
     boolean test(SkillCTX ctx);
 }

@@ -5,13 +5,15 @@ import org.red.minecraft.dellarte.library.entity.A_Entity;
 import org.red.minecraft.dellarte.library.entity.A_Player;
 import org.red.minecraft.dellarte.library.util.map.CoolTimeMap;
 import org.red.minecraft.uw.core.UndefinedWorldCorePlugin;
+import org.red.minecraft.uw.core.combat.ElementalType;
 import org.red.minecraft.uw.core.exeception.CannotPayCostException;
 import org.red.minecraft.uw.core.skill.condition.Condition;
 import org.red.minecraft.uw.core.skill.cost.*;
 import org.red.minecraft.uw.core.skill.effect.Effect;
 import org.red.minecraft.uw.core.skill.effect.EffectResult;
 import org.red.minecraft.uw.core.skill.effect.PierceIncreaseEffect;
-import org.red.minecraft.uw.core.skill.factory.DoubleSimpleFactory;
+import org.red.minecraft.uw.core.skill.effect.modifier.elemental.ElementalEffect;
+import org.red.minecraft.uw.core.skill.factory.SimpleFactory;
 import org.red.minecraft.uw.core.skill.factory.SkillFactory;
 
 import java.util.HashMap;
@@ -132,9 +134,11 @@ public class SkillEngine {
     }
 
     public static void setFactories() {
-        setEffectFactory(new DoubleSimpleFactory<>(PierceIncreaseEffect.class, "pierce_increase", "increase"));
-        costMap.put(CostType.MANA, new DoubleSimpleFactory<>(ManaCost.class, "mana", "value"));
-        costMap.put(CostType.HEALTH, new DoubleSimpleFactory<>(HealthCost.class, "health", "value"));
-        costMap.put(CostType.STAMINA, new DoubleSimpleFactory<>(StaminaCost.class, "stamina", "value"));
+        setEffectFactory(new SimpleFactory<>("pierce_increase", "increase", PierceIncreaseEffect.class, double.class));
+        setEffectFactory(new SimpleFactory<>("elemental_effect", "elemental",  ElementalEffect.class, ElementalType.class));
+
+        costMap.put(CostType.MANA, new SimpleFactory<>("mana", ManaCost.class, double.class));
+        costMap.put(CostType.HEALTH, new SimpleFactory<>("health", HealthCost.class, double.class));
+        costMap.put(CostType.STAMINA, new SimpleFactory<>("stamina", StaminaCost.class, double.class));
     }
 }

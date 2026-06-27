@@ -1,11 +1,10 @@
 package org.red.minecraft.uw.core.skill.effect;
 
 import org.red.minecraft.uw.core.skill.SkillCTX;
-import org.red.minecraft.uw.core.util.HasID;
 
 import java.util.concurrent.CompletableFuture;
 
-public interface Effect extends HasID {
+public interface Effect {
     /**
      * 실질 스킬 효과가 적용되는 함수
      * 결과에 따라 EffectResult를 반환하며
