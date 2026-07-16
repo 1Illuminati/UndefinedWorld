@@ -25,9 +25,10 @@ public enum CTXType {
     SEARCH_TYPE(Target.SearchType.class),
     SEARCH_CENTER(Location.class),
     TARGET_FACTION(FactionType.class),
+
     LAST_TARGET_INFO(A_Entity[].class),
 
-    ELEMENTAL(ElementalType.class),
+    ELEMENTAL(ElementalType.class, ElementalType.NONE),
 
     //스킬의 체인 횟수 수정자
     PIERCE(int.class, 1),
@@ -35,6 +36,10 @@ public enum CTXType {
     REPEAT(int.class, 1),
     //스킬의 갯수 수정자
     COUNT(int.class, 1),
+    CHAIN(int.class, 1),
+    LEVEL(int.class, 1),
+    RENDER(double.class, 1.0),
+    TIME(double.class, 1.0),
     //스킬 크기 수정자
     SIZE(double.class, 1.0),
     //스킬의 범위 수정자

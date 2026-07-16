@@ -25,4 +25,5 @@ public interface Gear extends HasID {
     List<Condition> getConditions();
     int getCool();
     int getPower();
+    int getCastingTime();
 }

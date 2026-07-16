@@ -14,4 +14,6 @@ public interface Effect {
      * @return CompletableFuture
      */
     CompletableFuture<EffectResult> execute(SkillCTX ctx);
+
+    EffectType[] getEffectTypes();
 }

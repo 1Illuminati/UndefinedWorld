@@ -41,7 +41,7 @@ public class ManaCost implements Cost<Double> {
     public void payCost(A_Entity entity, Double cost) throws CannotPayCostException {
         if (!(entity instanceof A_Player player)) return;
         if (!hasCost(entity, cost)) throw new CannotPayCostException(this);
-        else new PlayerHelper(player).addStamina(-cost);
+        else new PlayerHelper(player).addMana(-cost);
     }
 
     @Override

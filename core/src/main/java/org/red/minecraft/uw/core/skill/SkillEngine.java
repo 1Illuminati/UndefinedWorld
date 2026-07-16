@@ -1,5 +1,6 @@
 package org.red.minecraft.uw.core.skill;
 
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.Nullable;
 import org.red.minecraft.dellarte.library.entity.A_Entity;
 import org.red.minecraft.dellarte.library.entity.A_Player;
@@ -69,6 +70,7 @@ public class SkillEngine {
         // 비용 체크
         for (CostType costType : CostType.values()) {
             List<Cost<?>> costs = costData.getCost(costType);
+            if (costs.isEmpty()) continue;
 
             if (!costs.getFirst().hasCostMultiple(caster, costs.toArray(new Cost[]{}))) {
                 if (isPlayer) caster.sendMessage(""); //todo cost 부족 메세지
@@ -79,6 +81,8 @@ public class SkillEngine {
         //비용처리
         for (CostType costType : CostType.values()) {
             List<Cost<?>> costs = costData.getCost(costType);
+            if (costs.isEmpty()) continue;
+
             try {
                 costs.getFirst().payMultiple(caster, costs.toArray(new Cost[]{}));
             } catch (CannotPayCostException exception) {
@@ -113,24 +117,36 @@ public class SkillEngine {
         return false;
     }
 
-    private static void runSkillEffect(SkillCTX ctx, SkillDefinition.SkillNode node) {
-        A_Entity caster = ctx.getCTX(CTXType.CASTER);
-        for (Condition condition : node.gear().getConditions()) {
-            if (!condition.test(ctx)) {
-                if (caster instanceof A_Player) caster.sendMessage(""); //todo 조건 불충분 메세지
-                return;
+    private static void runSkillEffect(SkillCTX originCTX, List<SkillDefinition.SkillNode> nodes) {
+        for (SkillDefinition.SkillNode node : nodes) {
+            // 동시 실행 노드 간 ctx 격리를 위해 노드마다 복사
+            SkillCTX ctx = originCTX.copy();
+            A_Entity caster = ctx.getCTX(CTXType.CASTER);
+
+            // Condition 체크: 하나라도 실패하면 이 노드 스킵
+            boolean conditionFailed = false;
+            for (Condition condition : node.gear().getConditions()) {
+                if (!condition.test(ctx)) {
+                    if (caster instanceof A_Player) caster.sendMessage(""); // todo 조건 불충분 메세지
+                    conditionFailed = true;
+                    break;
+                }
             }
+            if (conditionFailed) continue;
+
+            CompletableFuture<EffectResult> completableFuture = node.gear().getEffect().execute(ctx);
+
+            completableFuture.thenAcceptAsync(effectResult -> {
+                switch (effectResult) {
+                    case SUCCESS -> {
+                        List<SkillDefinition.SkillNode> next = node.nextNode();
+                        if (next != null && !next.isEmpty()) runSkillEffect(ctx, next);
+                    }
+                    case FAIL -> UndefinedWorldCorePlugin.sendLog("Skill Fail gear:" + node.gear().getID());
+                    case ERROR -> UndefinedWorldCorePlugin.sendLog("Skill Error gear:" + node.gear().getID());
+                }
+            }, runnable -> Bukkit.getScheduler().runTask(UndefinedWorldCorePlugin.instance, runnable));
         }
-
-        CompletableFuture<EffectResult> completableFuture = node.gear().getEffect().execute(ctx);
-
-        completableFuture.thenAccept(effectResult -> {
-           switch (effectResult) {
-               case SUCCESS -> runSkillEffect(ctx, node);
-               case FAIL -> UndefinedWorldCorePlugin.sendLog("Skill Fail gear:" + node.gear().getID());
-               case ERROR -> UndefinedWorldCorePlugin.sendLog("Skill Error gear:" + node.gear().getID());
-           }
-        });
     }
 
     public static void setFactories() {

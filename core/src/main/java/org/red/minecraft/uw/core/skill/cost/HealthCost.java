@@ -58,7 +58,7 @@ public class HealthCost implements Cost<Double>{
         double sumCost = 0;
 
         for (Cost<Double> cost : costs) {
-            if (!cost.getClass().isAssignableFrom(ManaCost.class)) throw new IllegalArgumentException();//todo
+            if (!cost.getClass().isAssignableFrom(HealthCost.class)) throw new IllegalArgumentException();//todo
             sumCost += cost.getValue();
         }
 

@@ -37,6 +37,11 @@ public record BlankGear(String id, Effect effect) implements Gear {
     }
 
     @Override
+    public int getCastingTime() {
+        return 0;
+    }
+
+    @Override
     public String getID() {
         return this.id;
     }

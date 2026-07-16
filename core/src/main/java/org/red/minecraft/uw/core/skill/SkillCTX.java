@@ -15,6 +15,10 @@ public class SkillCTX {
         }
     }
 
+    private SkillCTX(A_DataMap map) {
+        this.map.copy(map);
+    }
+
     public <T> void setCTX(CTXType type, T value) {
         this.map.put(type.name(), value);
     }
@@ -29,5 +33,9 @@ public class SkillCTX {
 
     public boolean hasCTX(CTXType type) {
         return map.containsKey(type.name());
+    }
+
+    public SkillCTX copy() {
+        return new SkillCTX(new A_DataMap(map.getMap()));
     }
 }

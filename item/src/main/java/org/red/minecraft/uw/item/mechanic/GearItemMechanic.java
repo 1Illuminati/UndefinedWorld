@@ -23,10 +23,12 @@ public class GearItemMechanic extends U_ItemMechanic implements GearItem, Gear {
     private final List<Condition> conditions = new ArrayList<>();
     private final int cool;
     private final int power;
+    private final int castingTime;
     public GearItemMechanic(@NonNull MechanicFactory factory, @NonNull ConfigurationSection section) {
         super(factory, section, U_ItemType.GEAR, new LoreBuilder());
         this.cool = section.getInt("cool", 0);
         this.power = section.getInt("power", 0);
+        this.castingTime = section.getInt("cast", 0);
 
         ConfigurationSection effectSection = section.getConfigurationSection("effect");
         if (effectSection == null || SkillEngine.hasEffectFactory(effectSection.getString("id"))) throw new IllegalArgumentException("Effect not found");
@@ -87,6 +89,11 @@ public class GearItemMechanic extends U_ItemMechanic implements GearItem, Gear {
     @Override
     public int getPower() {
         return this.power;
+    }
+
+    @Override
+    public int getCastingTime() {
+        return this.castingTime;
     }
 
     @Override
