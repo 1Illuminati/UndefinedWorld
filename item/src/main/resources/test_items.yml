@@ -1,0 +1,381 @@
+# ============================================================
+# UndefinedWorld 테스트 아이템 정의 (Nexo items 폴더용)
+# plugins/Nexo/items/ 에 이 파일이 자동 복사된다 (없을 때만).
+# 테스트 흐름:
+#   1. /ugive <아이템ID> 로 지급
+#   2. /skillcraft <이름> → 기어 배치 → 확인
+#   3. /skill equip RIGHT_CLICK <이름>
+#   4. 무기(test_sword 등) 들고 우클릭
+# ============================================================
+
+# ── 무기 (스킬 발동에 필요) ─────────────────────────────
+test_sword:
+  itemname: "테스트 검"
+  material: IRON_SWORD
+  Mechanics:
+    u_item:
+      type: WEAPON
+      grade: NORMAL
+      slot: SWORD
+      damage: 10
+      attributes:
+        PHYSICS_DAMAGE: 5
+
+test_staff:
+  itemname: "테스트 지팡이"
+  material: BLAZE_ROD
+  Mechanics:
+    u_item:
+      type: WEAPON
+      grade: RARE
+      slot: STAFF
+      damage: 5
+      attributes:
+        MAGIC_DAMAGE: 15
+        MANA_MAX: 20
+
+# ── 갑옷 (장비 GUI: /equip) ────────────────────────────
+test_helmet:
+  itemname: "테스트 투구"
+  material: IRON_HELMET
+  Mechanics:
+    u_item:
+      type: ARMOR
+      grade: NORMAL
+      slot: HELMET
+      defense: 5
+      attributes:
+        HEALTH_MAX: 10
+
+test_chestplate:
+  itemname: "테스트 흉갑"
+  material: IRON_CHESTPLATE
+  Mechanics:
+    u_item:
+      type: ARMOR
+      grade: NORMAL
+      slot: CHESTPLATE
+      defense: 8
+      attributes:
+        PHYSICS_DAMAGE_DEFENSE: 5
+
+test_leggings:
+  itemname: "테스트 레깅스"
+  material: IRON_LEGGINGS
+  Mechanics:
+    u_item:
+      type: ARMOR
+      grade: NORMAL
+      slot: LEGGINGS
+      defense: 7
+      attributes:
+        MAGIC_DAMAGE_DEFENSE: 5
+
+test_boots:
+  itemname: "테스트 부츠"
+  material: IRON_BOOTS
+  Mechanics:
+    u_item:
+      type: ARMOR
+      grade: NORMAL
+      slot: BOOTS
+      defense: 4
+      attributes:
+        DODGE: 5
+
+# ── 장신구 (고유 스탯 없음, attributes만) ────────────────
+test_necklace:
+  itemname: "테스트 목걸이"
+  material: EMERALD
+  Mechanics:
+    u_item:
+      type: ACCESSORY
+      grade: RARE
+      slot: NECKLACE
+      attributes:
+        MANA_MAX: 30
+        MANA_REGEN: 2
+
+test_ring:
+  itemname: "테스트 반지"
+  material: GOLD_NUGGET
+  Mechanics:
+    u_item:
+      type: ACCESSORY
+      grade: RARE
+      slot: RING
+      attributes:
+        CRITICAL_CHANCE: 10
+        CRITICAL_DAMAGE: 20
+
+# ── 기어: 타겟/데미지 기본 체인 ─────────────────────────
+gear_target:
+  itemname: "기어: 타겟 탐색"
+  material: ENDER_EYE
+  Mechanics:
+    u_item:
+      type: GEAR
+      grade: NORMAL
+      description: "주변 10칸 내 적 최대 3명 탐색"
+      power: 1
+      cool: 0
+      effect:
+        id: target
+        range: 10.0
+        count: 3
+        faction: ENEMY
+
+gear_damage:
+  itemname: "기어: 물리 타격"
+  material: IRON_NUGGET
+  Mechanics:
+    u_item:
+      type: GEAR
+      grade: NORMAL
+      description: "탐색된 대상에게 물리 데미지"
+      power: 2
+      cool: 2
+      effect:
+        id: damage
+        damageType: PHYSICAL
+        scale: 1.0
+      costs:
+        stamina:
+          value: 10
+
+gear_magic_damage:
+  itemname: "기어: 마법 타격"
+  material: AMETHYST_SHARD
+  Mechanics:
+    u_item:
+      type: GEAR
+      grade: NORMAL
+      description: "탐색된 대상에게 마법 데미지"
+      power: 2
+      cool: 2
+      effect:
+        id: damage
+        damageType: MAGIC
+        scale: 1.2
+      costs:
+        mana:
+          value: 15
+
+# ── 기어: 개별 실행형 ──────────────────────────────────
+gear_sword_aura:
+  itemname: "기어: 검기"
+  material: NETHERITE_SCRAP
+  Mechanics:
+    u_item:
+      type: GEAR
+      grade: RARE
+      description: "레드스톤 파티클 검기 발사"
+      power: 2
+      cool: 3
+      effect:
+        id: sword_aura
+        speed: 0.8
+        range: 8.0
+        size: 1.2
+        scale: 1.5
+      costs:
+        stamina:
+          value: 15
+
+gear_thunder:
+  itemname: "기어: 낙뢰"
+  material: LIGHTNING_ROD
+  Mechanics:
+    u_item:
+      type: GEAR
+      grade: EPIC
+      description: "대상에게 번개 데미지 (이전 노드 타겟 우선)"
+      power: 3
+      cool: 4
+      effect:
+        id: thunder
+      costs:
+        mana:
+          value: 25
+
+gear_arrow:
+  itemname: "기어: 화살 발사"
+  material: ARROW
+  Mechanics:
+    u_item:
+      type: GEAR
+      grade: NORMAL
+      description: "시선 방향으로 화살 발사"
+      power: 1
+      cool: 1
+      effect:
+        id: arrow
+        speed: 2.5
+
+gear_projectile:
+  itemname: "기어: 마력 투사체"
+  material: FIRE_CHARGE
+  Mechanics:
+    u_item:
+      type: GEAR
+      grade: NORMAL
+      description: "가상 투사체 발사, 적중 대상을 다음 노드에 전달"
+      power: 2
+      cool: 2
+      effect:
+        id: projectile
+        speed: 1.0
+        range: 20.0
+        size: 0.8
+      costs:
+        mana:
+          value: 10
+
+gear_heal:
+  itemname: "기어: 자가 회복"
+  material: GLISTERING_MELON_SLICE
+  Mechanics:
+    u_item:
+      type: GEAR
+      grade: NORMAL
+      description: "체력 6 회복"
+      power: 1
+      cool: 5
+      effect:
+        id: heal
+        amount: 6.0
+        self: true
+      costs:
+        mana:
+          value: 20
+
+gear_buff_regen:
+  itemname: "기어: 재생 버프"
+  material: GHAST_TEAR
+  Mechanics:
+    u_item:
+      type: GEAR
+      grade: NORMAL
+      description: "10초간 재생 버프 (자신)"
+      power: 1
+      cool: 8
+      effect:
+        id: buff
+        buffType: REGENERATION
+        level: 1
+        duration: 200
+        self: true
+      costs:
+        mana:
+          value: 15
+
+gear_debuff_glow:
+  itemname: "기어: 발광 디버프"
+  material: GLOW_INK_SAC
+  Mechanics:
+    u_item:
+      type: GEAR
+      grade: NORMAL
+      description: "탐색된 대상에게 5초 발광"
+      power: 1
+      cool: 3
+      effect:
+        id: buff
+        buffType: GLOWING
+        level: 1
+        duration: 100
+        self: false
+
+# ── 기어: 수정자 (다음 노드에 영향) ──────────────────────
+gear_pierce:
+  itemname: "기어: 관통 증가"
+  material: SPECTRAL_ARROW
+  Mechanics:
+    u_item:
+      type: GEAR
+      grade: NORMAL
+      description: "관통 +2 (수정자)"
+      power: 1
+      cool: 0
+      effect:
+        id: pierce_increase
+        increase: 2
+
+gear_size:
+  itemname: "기어: 크기 증가"
+  material: SLIME_BALL
+  Mechanics:
+    u_item:
+      type: GEAR
+      grade: NORMAL
+      description: "스킬 크기 +1.0 (수정자)"
+      power: 1
+      cool: 0
+      effect:
+        id: size_increase
+        increase: 1.0
+
+gear_elemental_thunder:
+  itemname: "기어: 번개 속성 부여"
+  material: NETHER_STAR
+  Mechanics:
+    u_item:
+      type: GEAR
+      grade: RARE
+      description: "이후 노드에 번개 속성 부여 (수정자)"
+      power: 1
+      cool: 0
+      effect:
+        id: elemental_effect
+        elemental: THUNDER
+
+gear_elemental_fire:
+  itemname: "기어: 화염 속성 부여"
+  material: BLAZE_POWDER
+  Mechanics:
+    u_item:
+      type: GEAR
+      grade: RARE
+      description: "이후 노드에 화염 속성 부여 (수정자)"
+      power: 1
+      cool: 0
+      effect:
+        id: elemental_effect
+        elemental: FIRE
+
+gear_merge_2:
+  itemname: "기어: 병합(2)"
+  material: COMPARATOR
+  Mechanics:
+    u_item:
+      type: GEAR
+      grade: EPIC
+      description: "다음 2개 기어를 동시 실행 (변환)"
+      power: 1
+      cool: 0
+      effect:
+        id: merge
+        value: 2
+
+# ── 기어: 조건 데모 ────────────────────────────────────
+gear_cond_lowhealth:
+  itemname: "기어: 위기의 일격"
+  material: REDSTONE
+  Mechanics:
+    u_item:
+      type: GEAR
+      grade: RARE
+      description: "체력 50% 이하일 때만 발동하는 강력한 물리 타격"
+      power: 2
+      cool: 3
+      effect:
+        id: damage
+        damageType: PHYSICAL
+        scale: 2.0
+      conditions:
+        health:
+          ratio: 0.5
+          above: false
+      costs:
+        stamina:
+          value: 5

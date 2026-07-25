@@ -1,5 +1,14 @@
 test: 1.0
 
+# 자원(체력/마나/스테미나) 재생 주기 (틱). 20틱 = 1초
+RegenSetting:
+  periodTicks: 20
+
+# 장비 시스템 설정
+EquipmentSetting:
+  # 주손 무기 감지 주기 (틱)
+  weaponScanTicks: 10
+
 StatSetting:
 # 근력
   STR:

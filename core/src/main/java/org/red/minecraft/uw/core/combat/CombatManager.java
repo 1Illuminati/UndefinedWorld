@@ -134,7 +134,50 @@ public final class CombatManager {
         double criDiv = manager.getAttributeValue(AttributeType.CRITICAL_CHANCE_DIVIDE);
         double criMul = manager.getAttributeValue(AttributeType.CRITICAL_CHANCE_MULTIPLY);
 
-        return Math.random() <= cri + (cri * (criDiv - criMul));
+        return Math.random() <= cri + (cri * (criMul - criDiv));
+    }
+
+    /**
+     * 회피 판정 (확정 공식, 구조 결정 2.5):
+     * 최종받는데미지 - Dodge * ((DODGE_MULTIPLY - DODGE_DIVIDE) / 100) < random(0, Dodge) 이면 회피 성공.
+     * Dodge 자체는 배율이 아닌 원시값, MULTIPLY/DIVIDE는 배율 % 처리.
+     *
+     * @param defender    방어자
+     * @param finalDamage 최종 확정 데미지
+     * @return 회피 성공 시 true
+     */
+    public static boolean randomDodgeCheck(A_LivingEntity defender, double finalDamage) {
+        AttributeManager manager = UndefinedWorldCore.getAttributeManager(defender);
+
+        double dodge = manager.getAttributeValue(AttributeType.DODGE);
+        if (dodge <= 0) return false;
+
+        double dodgeMul = manager.getAttributeValue(AttributeType.DODGE_MULTIPLY);
+        double dodgeDiv = manager.getAttributeValue(AttributeType.DODGE_DIVIDE);
+
+        double threshold = finalDamage - dodge * ((dodgeMul - dodgeDiv) / 100);
+        return threshold < Math.random() * dodge;
+    }
+
+    /**
+     * 막기 판정 (확정 공식, 구조 결정 2.5):
+     * 확률(%) = Block * (1 + (BLOCK_MULTIPLY - BLOCK_DIVIDE) / 100)
+     * Block 자체가 %값, MULTIPLY/DIVIDE는 배율 % 보정. 성공 시 데미지 완전 무효.
+     *
+     * @param defender 방어자
+     * @return 막기 성공 시 true
+     */
+    public static boolean randomBlockCheck(A_LivingEntity defender) {
+        AttributeManager manager = UndefinedWorldCore.getAttributeManager(defender);
+
+        double block = manager.getAttributeValue(AttributeType.BLOCK);
+        if (block <= 0) return false;
+
+        double blockMul = manager.getAttributeValue(AttributeType.BLOCK_MULTIPLY);
+        double blockDiv = manager.getAttributeValue(AttributeType.BLOCK_DIVIDE);
+
+        double chance = block * (1 + ((blockMul - blockDiv) / 100));
+        return Math.random() * 100 < chance;
     }
 
     public static void applyHitEffect(LivingEntity defEntity, Location damageSourceLoc) {

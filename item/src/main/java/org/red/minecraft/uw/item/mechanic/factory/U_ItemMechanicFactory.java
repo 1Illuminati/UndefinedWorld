@@ -8,8 +8,11 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import org.red.minecraft.uw.core.item.U_ItemType;
 import org.red.minecraft.uw.item.LoreBuilder;
+import org.red.minecraft.uw.item.mechanic.AccessoryItemMechanic;
+import org.red.minecraft.uw.item.mechanic.ArmorItemMechanic;
 import org.red.minecraft.uw.item.mechanic.GearItemMechanic;
 import org.red.minecraft.uw.item.mechanic.U_ItemMechanic;
+import org.red.minecraft.uw.item.mechanic.WeaponItemMechanic;
 
 public class U_ItemMechanicFactory extends MechanicFactory {
     public U_ItemMechanicFactory() {
@@ -35,19 +38,24 @@ public class U_ItemMechanicFactory extends MechanicFactory {
             throw new RuntimeException(e);
         }
 
-        return switch (type) {
+        Mechanic mechanic = switch (type) {
             case RESOURCE, ORE -> new U_ItemMechanic(this, configurationSection, type, new LoreBuilder());
             case FOOD -> null;
             case POTION -> null;
-            case ARMOR -> null;
-            case WEAPON -> null;
-            case SUB_WEAPON -> null;
-            case ACCESSORY -> null;
+            case ARMOR -> new ArmorItemMechanic(this, configurationSection);
+            case WEAPON -> new WeaponItemMechanic(this, configurationSection);
+            case SUB_WEAPON -> null; // todo 서브무기(왼손) 설계 확정 후 (T19-4)
+            case ACCESSORY -> new AccessoryItemMechanic(this, configurationSection);
             case SCROLL -> null;
             case SPECIAL -> null;
             case GEAR -> new GearItemMechanic(this, configurationSection);
             case SKILL_ARTIFACT -> null;
             case TOOL -> null;
         };
+
+        // 팩토리에 등록해야 getMechanic(id/ItemStack) 조회가 가능하다
+        // (미등록 시 아이템 판정 전부 실패 — 기어 배치/장비 GUI/무기 스캔 불가)
+        if (mechanic != null) this.addToImplemented(mechanic);
+        return mechanic;
     }
 }

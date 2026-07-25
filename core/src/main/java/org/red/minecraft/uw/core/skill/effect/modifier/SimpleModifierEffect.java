@@ -4,6 +4,7 @@ import org.red.minecraft.uw.core.skill.CTXType;
 import org.red.minecraft.uw.core.skill.SkillCTX;
 import org.red.minecraft.uw.core.skill.effect.Effect;
 import org.red.minecraft.uw.core.skill.effect.EffectResult;
+import org.red.minecraft.uw.core.skill.effect.EffectType;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -30,5 +31,10 @@ public class SimpleModifierEffect<T> implements Effect {
     public CompletableFuture<EffectResult> execute(SkillCTX ctx) {
         ctx.setCTX(type, this.value);
         return CompletableFuture.completedFuture(EffectResult.SUCCESS);
+    }
+
+    @Override
+    public EffectType[] getEffectTypes() {
+        return new EffectType[0];
     }
 }
