@@ -1,5 +1,8 @@
 package org.red.minecraft.uw.core.combat;
 
+import org.jetbrains.annotations.Nullable;
+import org.red.minecraft.uw.core.attribute.AttributeType;
+
 /**
  * 모든 속성타입들은 각기 스킬들의 데미지 유형을 해당 속성으로 변경시킨다
  * 단 여전히 물리 및 마법 유형의 데미지인점은 바뀌지 않는다
@@ -10,38 +13,65 @@ package org.red.minecraft.uw.core.combat;
  * todo 2. 단순히 낮고 회전율 높은 스킬로 속성 효과만 노릴수 있으니 스킬 무게 비례 확률 처리가 필요
  */
 public enum ElementalType {
-    NONE,
+    NONE(null),
     /**
      * 모든 유형의 화염속성 데미지 처리후에는 데미지를 입은 객체에게 화상 디버프를 부여한다
      * 화상 디버프는 기존 화염물리, 화염마법 데미지와 같은 유형이 아닌 다른 독자적인
      * 화상 데미지로 취급한다. 화염 공격력, 방어력 스텟에 영향을 받으며
      * 데미지는 화상 데미지를 받는 객체의 체력 * 0.5% * (공격력, 방어력 추가 연산) 으로 들어간다
      */
-    FIRE,
+    FIRE("FIRE"),
     /**
      * 모든 유형의 수속성 데미지는 데미지 처리후 데미지를 입은 객체에게 5%확률로 3초간 침묵 디버프를 부여한다
      * 침묵 디버프가 부여될 확률은 물 공격력, 방어력 스텟에 영향을 받는다 (상대방의 물 속성 방어력이 높을 경우 침묵 확률을 감소시킨다)
      */
-    WATER,
+    WATER("WATER"),
 
-    ICE,
+    ICE("ICE"),
     /**
      * 모든 유형의 바람속성 데미지는 데미지 처리후 데미지를 입은 객체에게 20% 확률로 이동속도 강탈 디버프를 부여한다
      * 이동속도 강탈: 상대의 이동속도를 일정시간동안 일부 감소 이후 플레이어의 이동속도를 증가
      * todo 구현 고려 및 사기성 고려 매우 필요
      *
      */
-    WIND,
+    WIND("WIND"),
     /**
      * 모든 유형의 땅속성 데미지는 데미지 처리후 데미지를 입은 객체에게 파쇄 디버프를 (중첩가능) 부여한다
      * 파쇄 디버프가 부여될 수록 해당 객체는 땅속성 데미지를 더 높게 받게 된다
      */
-    LAND,
+    LAND("EARTH"), // 주의: AttributeType은 EARTH_* 네이밍 사용
     /**
      * 모든 유형의 번개속성 데미지는 데미지 처리후 데미지를 입은 객체에게 감전 디버프를 부여한다
      * 감전 디버프가 부여된 상태에서 데미지를 입을 경우 번개속성의 데미지를 15%추가로 받으며 주변 다른 적 개체에게 연쇄 효과를 발생시킨다
      * 연쇄효과: 데미지를 입은 객체로부터 1칸 이내에 추가적인 데미지를 줄 수 있는 객체가 존재 할 경우 해당 객체에게 기존 공격력 50%에 해당하는
      * 추가적인 데미지를 제공 한번 연쇄효과 데미지를 받은 적은 2초간 연쇄효과로부터 면역을 가진다
      */
-    THUNDER;
+    THUNDER("THUNDER");
+
+    // ── 속성별 AttributeType 매핑 (NONE은 전부 null) ──
+    public final @Nullable AttributeType damage;
+    public final @Nullable AttributeType damageReduce;
+    public final @Nullable AttributeType damageMultiply;
+    public final @Nullable AttributeType defense;
+    public final @Nullable AttributeType resistance;
+    public final @Nullable AttributeType resistanceReduce;
+
+    ElementalType(@Nullable String attributePrefix) {
+        if (attributePrefix == null) {
+            this.damage = null;
+            this.damageReduce = null;
+            this.damageMultiply = null;
+            this.defense = null;
+            this.resistance = null;
+            this.resistanceReduce = null;
+            return;
+        }
+
+        this.damage = AttributeType.valueOf(attributePrefix + "_DAMAGE");
+        this.damageReduce = AttributeType.valueOf(attributePrefix + "_DAMAGE_REDUCE");
+        this.damageMultiply = AttributeType.valueOf(attributePrefix + "_DAMAGE_MULTIPLY");
+        this.defense = AttributeType.valueOf(attributePrefix + "_DAMAGE_DEFENSE");
+        this.resistance = AttributeType.valueOf(attributePrefix + "_DAMAGE_RESISTANCE");
+        this.resistanceReduce = AttributeType.valueOf(attributePrefix + "_DAMAGE_RESISTANCE_REDUCE");
+    }
 }

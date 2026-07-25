@@ -11,3 +11,6 @@ depend:
 commands:
   test:
     usage: "/test"
+  ugive:
+    usage: "/ugive <아이템ID> [수량]"
+    aliases: [ug]

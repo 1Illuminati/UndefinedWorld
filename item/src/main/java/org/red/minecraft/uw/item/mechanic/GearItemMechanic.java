@@ -31,7 +31,7 @@ public class GearItemMechanic extends U_ItemMechanic implements GearItem, Gear {
         this.castingTime = section.getInt("cast", 0);
 
         ConfigurationSection effectSection = section.getConfigurationSection("effect");
-        if (effectSection == null || SkillEngine.hasEffectFactory(effectSection.getString("id"))) throw new IllegalArgumentException("Effect not found");
+        if (effectSection == null || !SkillEngine.hasEffectFactory(effectSection.getString("id"))) throw new IllegalArgumentException("Effect not found");
         this.effect = SkillEngine.getEffectFactory(effectSection.getString("id")).create(effectSection);
 
         this.setConditions();
@@ -40,6 +40,7 @@ public class GearItemMechanic extends U_ItemMechanic implements GearItem, Gear {
 
     private void setConditions() {
         ConfigurationSection section = this.getSection().getConfigurationSection("conditions");
+        if (section == null) return; // conditions 미정의 기어 허용
 
         for (String key : section.getKeys(false)) {
             SkillFactory<? extends Condition> factory = SkillEngine.getConditionFactory(key);
@@ -51,9 +52,18 @@ public class GearItemMechanic extends U_ItemMechanic implements GearItem, Gear {
 
     private void setCost() {
         ConfigurationSection section = this.getSection().getConfigurationSection("costs");
+        if (section == null) return; // costs 미정의 기어 허용
 
+        // 스키마: costs.<타입명>.value (conditions와 동일하게 키 = 타입명)
+        // ex) costs: { mana: { value: 10 } }
         for (String key : section.getKeys(false)) {
-            CostType type = CostType.valueOf(section.getString(key));
+            CostType type;
+            try {
+                type = CostType.valueOf(key.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Invalid cost type: " + key);
+            }
+
             SkillFactory<? extends Cost<?>> factory = SkillEngine.getCostFactory(type);
 
             if (factory == null) continue;

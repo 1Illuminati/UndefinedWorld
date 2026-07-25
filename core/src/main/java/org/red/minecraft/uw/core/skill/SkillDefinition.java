@@ -31,6 +31,7 @@ public class SkillDefinition implements CanFix {
 
         this.costData = buildCostData();
         this.nodes = buildNodes();
+        this.setConversions(); // ConversionEffect(Merge 등) 노드 구조 변환 적용
 
         int[] stats = calcStats();
         this.skillPower = stats[0];

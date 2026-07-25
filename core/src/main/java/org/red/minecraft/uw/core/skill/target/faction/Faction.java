@@ -28,6 +28,12 @@ public class Faction {
 
             // TODO: 파티 시스템 구현 이후 파티원 포함 조건으로 교체
             case PARTY -> entity -> entity.getUniqueId().equals(caster.getUniqueId());
+
+            // TODO: 관계(우호/중립) 시스템 구현 이후 실제 관계 조건으로 교체 (임시: PARTY와 동일하게 자신만)
+            case FRIENDLY, NEUTRAL -> entity -> entity.getUniqueId().equals(caster.getUniqueId());
+
+            // TODO: NONE(알 수 없음)의 대상 판정 정의 필요 (임시: 아무도 매칭하지 않음)
+            case NONE -> entity -> false;
         };
     }
 }

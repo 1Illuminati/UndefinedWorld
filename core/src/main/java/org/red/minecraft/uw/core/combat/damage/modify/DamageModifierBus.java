@@ -1,5 +1,8 @@
 package org.red.minecraft.uw.core.combat.damage.modify;
 
+import org.red.minecraft.uw.core.UndefinedWorldCore;
+import org.red.minecraft.uw.core.combat.ElementalType;
+import org.red.minecraft.uw.core.combat.buff.BuffType;
 import org.red.minecraft.uw.core.combat.damage.DamageCTX;
 import org.red.minecraft.uw.core.combat.damage.DamageType;
 
@@ -35,22 +38,36 @@ public class DamageModifierBus {
 
         boolean isCri = type.isCritical && ctx.isCritical();
 
+        // ── 공격 단계: 기본공격(0) → 속성공격(5) → 치명타(10) → 고정데미지(999)
         if (ctx.hasAttacker()) {
             switch (type) {
                 case PHYSICAL -> damageModifierBus.add(0, new PhysicalAtkModifier());
                 case MAGIC -> damageModifierBus.add(0, new MagicAtkModifier());
             }
 
-            if (isCri) damageModifierBus.add(1, new CriticalAtkModifier());
+            if (ctx.elementalType() != ElementalType.NONE) damageModifierBus.add(5, new ElementalAtkModifier());
+            if (isCri) damageModifierBus.add(10, new CriticalAtkModifier());
             if (type.isTrueDamage) damageModifierBus.add(999, new TrueDamageModifier());
         }
 
+        // ── 방어 단계: 기본방어(100) → 치명타방어(101) → 속성방어(105)
         switch (type) {
             case PHYSICAL -> damageModifierBus.add(100, new PhysicalDefModifier());
             case MAGIC -> damageModifierBus.add(100, new MagicDefModifier());
         }
 
         if (isCri) damageModifierBus.add(101, new CriticalDefModifier());
+        if (ctx.elementalType() != ElementalType.NONE) damageModifierBus.add(105, new ElementalDefModifier());
+
+        // 감전 상태의 방어자가 번개속성 데미지를 받으면 15% 추가 (방어 계산 이후)
+        if (ctx.elementalType() == ElementalType.THUNDER
+                && UndefinedWorldCore.getBuffManager().hasBuff(ctx.defender(), BuffType.SHOCK))
+            damageModifierBus.add(200, new ShockedDefModifier());
+
+        // 파쇄 중첩 상태의 방어자가 땅속성 데미지를 받으면 중첩당 추가 (방어 계산 이후)
+        if (ctx.elementalType() == ElementalType.LAND
+                && UndefinedWorldCore.getBuffManager().hasBuff(ctx.defender(), BuffType.SHATTER))
+            damageModifierBus.add(200, new ShatterDefModifier());
 
         return damageModifierBus;
     }

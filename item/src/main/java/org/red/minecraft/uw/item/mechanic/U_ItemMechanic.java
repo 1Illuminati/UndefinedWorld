@@ -4,10 +4,15 @@ import com.nexomc.nexo.mechanics.Mechanic;
 import com.nexomc.nexo.mechanics.MechanicFactory;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jspecify.annotations.NonNull;
+import org.red.minecraft.uw.core.UndefinedWorldCorePlugin;
+import org.red.minecraft.uw.core.attribute.AttributeType;
 import org.red.minecraft.uw.core.item.U_Item;
 import org.red.minecraft.uw.core.item.U_ItemGrade;
 import org.red.minecraft.uw.core.item.U_ItemType;
 import org.red.minecraft.uw.item.LoreBuilder;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class U_ItemMechanic extends Mechanic implements U_Item {
     private final U_ItemType type;
@@ -39,6 +44,29 @@ public class U_ItemMechanic extends Mechanic implements U_Item {
     @Override
     public U_ItemGrade getGrade() {
         return this.grade;
+    }
+
+    /**
+     * YAML의 attributes 섹션을 파싱한다. (구조 결정 T19-5)
+     * 형식: attributes: { PHYSICS_DAMAGE_DEFENSE: 10, ... }
+     * 잘못된 AttributeType 키는 로그 후 무시한다.
+     */
+    protected static Map<AttributeType, Double> parseAttributes(ConfigurationSection section) {
+        Map<AttributeType, Double> map = new HashMap<>();
+
+        ConfigurationSection attSection = section.getConfigurationSection("attributes");
+        if (attSection == null) return map;
+
+        for (String key : attSection.getKeys(false)) {
+            AttributeType type = AttributeType.byName(key);
+            if (type == null) {
+                UndefinedWorldCorePlugin.sendLog("Invalid attribute key: " + key + " (" + section.getName() + ")");
+                continue;
+            }
+            map.put(type, attSection.getDouble(key));
+        }
+
+        return map;
     }
 
     public void setLore() {

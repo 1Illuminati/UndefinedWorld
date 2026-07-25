@@ -27,20 +27,19 @@ public class EntityDamageListener extends A_Listener {
         UndefinedWorldCorePlugin.sendLog(event.getClass().getSimpleName());
         if (event.isCancelled() || event instanceof UWDamageEvent || event instanceof UWAtkDamageEvent || !(event.getEntity() instanceof LivingEntity livingEntity)) return;
 
+        // 낙하/익사/화염 등 엔티티 공격이 아닌 환경 데미지는 UW 파이프라인 예외처리 — 바닐라 처리 유지 (발견이슈 확정)
+        if (!(event instanceof EntityDamageByEntityEvent atkEvent)) return;
+
         event.setCancelled(true);
         A_LivingEntity defender = CommediaDellarte.getALivingEntity(livingEntity);
-        if (event instanceof EntityDamageByEntityEvent atkEvent) {
-            if (atkEvent.getDamager() instanceof Projectile projectile) {
-                this.onProjectileHit(event, projectile, projectile.getShooter());
-                return;
-            }
 
-            A_Entity attacker = CommediaDellarte.getAEntity(atkEvent.getDamager());
-            CombatManager.damage(attacker, defender, DamageType.PHYSICAL, event.getDamage());
+        if (atkEvent.getDamager() instanceof Projectile projectile) {
+            this.onProjectileHit(event, projectile, projectile.getShooter());
             return;
         }
 
-        CombatManager.damage(defender, DamageType.PHYSICAL, event.getDamage());
+        A_Entity attacker = CommediaDellarte.getAEntity(atkEvent.getDamager());
+        CombatManager.damage(attacker, defender, DamageType.PHYSICAL, event.getDamage());
     }
 
     public void onProjectileHit(EntityDamageEvent event, Projectile projectile, ProjectileSource shooter) {

@@ -12,6 +12,7 @@ import org.red.minecraft.uw.core.combat.damage.DamageCTX;
 import org.red.minecraft.uw.core.combat.damage.DamageType;
 import org.red.minecraft.uw.core.combat.damage.modify.DamageModifierBus;
 import org.red.minecraft.uw.core.event.UWDamageEvent;
+import org.red.minecraft.uw.core.skill.CastingManager;
 
 public class DamageProcess {
     private final DamageCTX originCTX;
@@ -34,8 +35,34 @@ public class DamageProcess {
 
     public void run() {
         DamageCTX resultCTX = DamageModifierBus.create(this.originCTX.copy()).flush();
+
+        // 회피 판정 — 공격자가 있는 데미지만 대상 (todo 독/화상 등 타입별 회피 제외 여부 확정 필요)
+        if (resultCTX.hasAttacker() && CombatManager.randomDodgeCheck(resultCTX.defender(), resultCTX.finalDamage())) {
+            UndefinedWorldCorePlugin.sendLog("Dodge! " + resultCTX);
+            return;
+        }
+
+        // 막기 판정 — 성공 시 데미지 완전 무효 (todo 회피/막기 판정 순서 확정 필요, 현재 회피 → 막기)
+        if (resultCTX.hasAttacker() && CombatManager.randomBlockCheck(resultCTX.defender())) {
+            UndefinedWorldCorePlugin.sendLog("Block! " + resultCTX);
+            return;
+        }
+
         EntityDamageEvent event = this.createEvent(resultCTX);
         setEvent(event);
+
+        // 데미지 확정 이후 부수효과 (속성 디버프, 흡혈, 캐스팅 취소) — 이벤트 취소 시 미발동
+        if (!event.isCancelled()) {
+            ElementalPostProcessor.process(resultCTX, event);
+            VamfirePostProcessor.process(resultCTX, event);
+
+            // 캐스팅 취소 규칙 1: 상대 엔티티의 공격에 의한 데미지만, 디버프 데미지(독/화상)는 제외
+            if (resultCTX.hasAttacker()
+                    && resultCTX.type() != DamageType.POISON
+                    && resultCTX.type() != DamageType.BURNING)
+                CastingManager.onAttacked(resultCTX.defender());
+        }
+
         UndefinedWorldCorePlugin.sendLog(resultCTX.toString());
     }
 

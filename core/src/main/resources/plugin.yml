@@ -9,3 +9,8 @@ depend:
 
 commands:
   stat:
+  equipment:
+    aliases: [equip, eq]
+  skill:
+  skillcraft:
+    aliases: [sc]

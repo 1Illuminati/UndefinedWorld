@@ -19,15 +19,12 @@ import java.util.concurrent.CompletableFuture;
 
 /**
  * 번개 공격 이펙트.
- *
  * 대상 결정 우선순위:
  *   1순위: CTX 의 LAST_TARGET_INFO 가 있으면 해당 엔티티 배열 사용
  *   2순위: CTX 의 탐색 파라미터(SEARCH_RANGE, TARGET_COUNT 등)로 주변 탐색
- *
  * 적중한 각 대상에게:
  *   - 번개 시각 효과 (strikeLightningEffect)
  *   - CHAIN_LIGHTING 타입 + THUNDER 속성 데미지
- *
  * 데미지 = 시전자의 MAGIC_DAMAGE 속성 × CTX.DAMAGE 배율
  */
 public class ThunderEffect implements Effect {
@@ -108,6 +105,6 @@ public class ThunderEffect implements Effect {
 
     @Override
     public EffectType[] getEffectTypes() {
-        return new EffectType[]{EffectType.MAGIC};
+        return new EffectType[]{EffectType.MAGIC, EffectType.TARGET};
     }
 }

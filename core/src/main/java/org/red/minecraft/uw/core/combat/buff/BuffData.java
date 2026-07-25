@@ -1,10 +1,10 @@
 package org.red.minecraft.uw.core.combat.buff;
 
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.red.minecraft.dellarte.library.entity.A_Entity;
+import org.red.minecraft.dellarte.library.entity.A_Player;
 
 import java.util.UUID;
 import java.util.function.BiConsumer;
@@ -85,7 +85,7 @@ public class BuffData {
     }
 
     private boolean isOffline() {
-        return entity instanceof Player p && !p.isOnline();
+        return entity instanceof A_Player p && !p.isOnline();
     }
 
     private int period() {

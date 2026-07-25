@@ -9,5 +9,6 @@ public enum EffectType {
     BUFF,
     DEBUFF,
     MODIFIER,
-    MOVE
+    MOVE,
+    TARGET
 }

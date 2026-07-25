@@ -50,7 +50,14 @@ public class MythicAttributeManager extends AttributeManager {
     }
 
     public double getAttributeValue(AttributeType aType) {
-        return getBaseAttributeValue(aType, ContainerType.STAT);
+        double result = 0;
+
+        for (ContainerType cType : ContainerType.values()) {
+            if (cType == ContainerType.EQUIPMENT) continue;
+            result += getBaseAttributeValue(aType, cType);
+        }
+
+        return result;
     }
 
     public StatType getStatType(AttributeType type) {
