@@ -36,7 +36,9 @@ public class DamageModifierBus {
         DamageModifierBus damageModifierBus = new DamageModifierBus(ctx);
         DamageType type = ctx.type();
 
-        boolean isCri = type.isCritical && ctx.isCritical();
+        // 치명타는 공격자 스텟(CRITICAL_DAMAGE)에서 나오므로 공격자가 없으면 성립하지 않는다.
+        // (hasAttacker를 빼면 CriticalAtkModifier 없이 CriticalDefModifier만 등록되어 데미지가 일방적으로 깎였다)
+        boolean isCri = type.isCritical && ctx.isCritical() && ctx.hasAttacker();
 
         // ── 공격 단계: 기본공격(0) → 속성공격(5) → 치명타(10) → 고정데미지(999)
         if (ctx.hasAttacker()) {

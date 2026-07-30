@@ -13,6 +13,21 @@ import org.red.minecraft.uw.core.combat.damage.DamageType;
 import org.red.minecraft.uw.core.combat.damage.process.DamageAtkProcess;
 import org.red.minecraft.uw.core.combat.damage.process.DamageProcess;
 
+/**
+ * 데미지 진입점 모음.
+ *
+ * <h3>scale 파라미터의 적용 범위 (확정 사항 — 현행 유지)</h3>
+ * {@code scale} 은 <b>물리/마법 공격 배율</b> 전용이다.
+ * PhysicalAtkModifier / MagicAtkModifier 안에서만 곱해지고, 이 두 Modifier 는
+ * DamageModifierBus.create 에서 <b>공격자가 있고 DamageType 이 PHYSICAL 또는 MAGIC 일 때만</b> 등록된다.
+ *
+ * 따라서 아래 경우 scale 은 <b>무시된다(항상 1배)</b>. 버그가 아니라 확정된 동작이다.
+ * <ul>
+ *   <li>DamageType 이 BURNING / POISON / CHAIN_LIGHTING / FREEZE / REFLECT / COST 인 데미지</li>
+ *   <li>공격자가 없는 모든 데미지 (독/화상 도트, 자원 소모 등)</li>
+ * </ul>
+ * 이 타입들에 배율을 주려면 호출부에서 damage 값 자체를 곱해서 넘겨야 한다.
+ */
 public final class CombatManager {
     public static void damage(DamageProcess process) {
         process.run();
@@ -127,6 +142,13 @@ public final class CombatManager {
     }
 
 
+    /**
+     * 치명타 발생 판정.
+     *
+     * CRITICAL_CHANCE_MULTIPLY / CRITICAL_CHANCE_DIVIDE 는 Process.md 2.5 "Attribute 처리 규칙"의
+     * 배율 % 처리 대상이므로 /100 을 적용한다. (randomBlockCheck 및 모든 Modifier 와 동일한 규칙)
+     * 이전 식은 /100 이 없어 MULTIPLY 100(= +100%) 일 때 기대 2배 대신 101배가 됐다.
+     */
     public static boolean randomCriCheck(A_Entity entity) {
         AttributeManager manager = UndefinedWorldCore.getAttributeManager(entity);
 
@@ -134,7 +156,7 @@ public final class CombatManager {
         double criDiv = manager.getAttributeValue(AttributeType.CRITICAL_CHANCE_DIVIDE);
         double criMul = manager.getAttributeValue(AttributeType.CRITICAL_CHANCE_MULTIPLY);
 
-        return Math.random() <= cri + (cri * (criMul - criDiv));
+        return Math.random() <= cri + (cri * ((criMul - criDiv) / 100));
     }
 
     /**

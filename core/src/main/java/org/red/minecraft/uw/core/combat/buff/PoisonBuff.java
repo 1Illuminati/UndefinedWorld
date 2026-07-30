@@ -13,6 +13,7 @@ public class PoisonBuff implements Buff {
 
     @Override public BuffContext context() { return ctx; }
     @Override public BuffType type()       { return BuffType.POISON; }
+    @Override public String getName()      { return type().name(); }
     @Override public int tickCount()       { return 20; }
 
     @Override

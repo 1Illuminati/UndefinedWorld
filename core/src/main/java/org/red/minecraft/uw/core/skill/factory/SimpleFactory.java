@@ -54,11 +54,15 @@ public class SimpleFactory<T, A> implements SkillFactory<T> {
 
     @Override
     public T create(ConfigurationSection section) {
+        if (section == null) {
+            throw new IllegalArgumentException(describe(null) + " — section is null");
+        }
+
         A value = resolveValue(section);
 
         if (value == null) {
             if (defaultValue == null) {
-                throw new IllegalArgumentException(String.format("%s is not a valid value", valueName));
+                throw new IllegalArgumentException(describe(section) + " — '" + valueName + "' is missing");
             }
             value = defaultValue;
         }
@@ -66,14 +70,22 @@ public class SimpleFactory<T, A> implements SkillFactory<T> {
         try {
             return resolveConstructor().newInstance(value);
         } catch (ReflectiveOperationException e) {
-            throw new RuntimeException(
-                    "Failed to construct " + factoryClass.getName() + " from '" + valueName + "' (value type: "
-                            + valueClass.getName() + ")", e);
+            throw new RuntimeException(describe(section) + " — failed to construct " + factoryClass.getName()
+                    + " from '" + valueName + "' (value type: " + valueClass.getName() + ")", e);
         }
+    }
+
+    /** 오류 메시지용 컨텍스트 (팩토리 id + 설정 경로) */
+    private String describe(ConfigurationSection section) {
+        return "SimpleFactory[" + id + "] at '" + (section == null ? "null" : section.getCurrentPath()) + "'";
     }
 
     // ---- value 해석 ----
 
+    /**
+     * @return 값이 아예 없으면 null (기본값 폴백 대상). 값이 있으나 타입이 맞지 않으면 예외.
+     *         (잘못 적은 값을 조용히 기본값으로 대체하면 설정 오타를 추적할 수 없다)
+     */
     @SuppressWarnings("unchecked")
     private A resolveValue(ConfigurationSection section) {
         if (valueClass.isEnum()) {
@@ -97,7 +109,12 @@ public class SimpleFactory<T, A> implements SkillFactory<T> {
             if (wrapper == Byte.class)    return (A) Byte.valueOf(n.byteValue());
         }
 
-        return wrapper.isInstance(raw) ? (A) raw : null;
+        if (!wrapper.isInstance(raw)) {
+            throw new IllegalArgumentException(describe(section) + " — '" + valueName + "' must be "
+                    + wrapper.getSimpleName() + " but was " + raw.getClass().getSimpleName() + " (" + raw + ")");
+        }
+
+        return (A) raw;
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -106,8 +123,14 @@ public class SimpleFactory<T, A> implements SkillFactory<T> {
         if (raw == null) {
             return null;
         }
-        // valueClass 는 isEnum() 으로 이미 검증됨. raw Class 로 캐스팅해 valueOf 추론 충돌 회피.
-        return (A) Enum.valueOf((Class) valueClass, raw);
+
+        try {
+            // valueClass 는 isEnum() 으로 이미 검증됨. raw Class 로 캐스팅해 valueOf 추론 충돌 회피.
+            return (A) Enum.valueOf((Class) valueClass, raw);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(describe(section) + " — '" + valueName + "' has no "
+                    + valueClass.getSimpleName() + " constant '" + raw + "'", e);
+        }
     }
 
     // ---- 생성자 해석 (원시/래퍼 양방향 폴백) ----

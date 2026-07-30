@@ -1,6 +1,7 @@
 package org.red.minecraft.uw.core.combat.damage.modify;
 
 import org.red.minecraft.uw.core.UndefinedWorldCore;
+import org.red.minecraft.uw.core.UndefinedWorldCorePlugin;
 import org.red.minecraft.uw.core.attribute.AttributeManager;
 import org.red.minecraft.uw.core.attribute.AttributeType;
 import org.red.minecraft.uw.core.combat.damage.DamageCTX;
@@ -19,5 +20,8 @@ public class CriticalAtkModifier implements DamageModifier{
         double finalMul = 1 + ((mul - mulReduce) / 100);
 
         ctx.setDamage(ctx.damage() * (1 + finalCri * finalMul));
+        UndefinedWorldCorePlugin.sendLog(String.format("CriticalAtk cri:%f, criRe:%f, mul:%f, mulRe:%f, fCri:%f, fMul:%f",
+                cri, criReduce, mul, mulReduce, finalCri, finalMul));
+        UndefinedWorldCorePlugin.sendLog(ctx.toString());
     }
 }

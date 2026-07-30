@@ -23,7 +23,10 @@ public interface Gear extends HasID {
     List<Cost> getCosts();
     Effect getEffect();
     List<Condition> getConditions();
+    /** 쿨타임 (초) */
     int getCool();
+    /** 파워. 상한 9는 스킬 <b>총합</b> 기준이며 개별 기어의 음수 파워는 허용된다 (§2.6 스킬 코어 6) */
     int getPower();
+    /** 캐스팅 시간 (<b>틱</b>) — 플레이어 표기만 초로 환산한다 (§2.6 스킬 코어 1) */
     int getCastingTime();
 }

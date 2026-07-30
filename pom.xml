@@ -14,6 +14,7 @@
         <module>core</module>
         <module>item</module>
         <module>mob</module>
+        <module>enchant</module>
     </modules>
 
     <properties>

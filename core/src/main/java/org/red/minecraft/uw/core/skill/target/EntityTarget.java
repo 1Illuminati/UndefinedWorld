@@ -4,6 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.Nullable;
+import org.red.minecraft.uw.core.UndefinedWorldCorePlugin;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -29,6 +30,21 @@ public record EntityTarget(Location center, int targetCount, double range, Bound
     @Override
     public Entity[] getTargets(@Nullable Predicate<Entity> predicate) {
         if (center.getWorld() == null) return new Entity[0];
+
+        // Stream.limit 은 음수 인자에 IllegalArgumentException 을 던진다.
+        // targetCount 는 기어 YAML(count)/CTX(TARGET_COUNT)에서 오므로 0 이하가 들어올 수 있다.
+        // LocationTarget 이 targetCount 0 이하일 때 빈 결과를 내는 것과 동일하게 맞춘다.
+        if (targetCount <= 0) {
+            UndefinedWorldCorePlugin.sendLog("EntityTarget: targetCount 가 0 이하라 탐색을 건너뜀 (targetCount=" + targetCount + ")");
+            return new Entity[0];
+        }
+
+        // range 는 기어 YAML(range)과 CTX 배율의 곱이라 무한대/NaN 이 들어올 수 있다.
+        // 그대로 getNearbyEntities 에 넘기면 탐색 박스가 사실상 월드 전체가 되어 서버가 멈춘다.
+        if (type != SearchType.BOX && !Double.isFinite(range)) {
+            UndefinedWorldCorePlugin.sendLog("EntityTarget: range 가 유한하지 않아 탐색을 건너뜀 (range=" + range + ", type=" + type + ")");
+            return new Entity[0];
+        }
 
         return switch (type) {
             case RANGE_CIRCLE -> {

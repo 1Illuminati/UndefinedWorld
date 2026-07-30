@@ -30,7 +30,7 @@ public class ArmorItemMechanic extends U_ItemMechanic implements ArmorItem {
     public ArmorItemMechanic(@NonNull MechanicFactory factory, @NonNull ConfigurationSection section) {
         super(factory, section, U_ItemType.ARMOR, new LoreBuilder());
 
-        this.defense = section.getDouble("defense", 0);
+        this.defense = parseNumber(section, "defense", 0);
         this.attributes = parseAttributes(section);
         this.equipmentType = parseSlot(section);
     }

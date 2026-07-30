@@ -14,6 +14,7 @@ public class SilenceDebuff implements Buff {
 
     @Override public BuffContext context() { return ctx; }
     @Override public BuffType type()       { return BuffType.SILENCE; }
+    @Override public String getName()      { return type().name(); }
     @Override public int tickCount()       { return 20; }
 
     @Override public void tick(A_Entity entity) { /* no-op: 상태 마커 */ }

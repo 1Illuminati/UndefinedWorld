@@ -12,7 +12,8 @@ public class LoreBuilder {
     private int layerHeight; //각 레이어 간의 공백 크기 1당 1칸씩
 
     public LoreBuilder setLayerHeight(int layerHeight) {
-        this.layerHeight = layerHeight;
+        // 음수면 build()의 Collections.nCopies가 예외를 던져 아이템 생성 자체가 실패한다
+        this.layerHeight = Math.max(0, layerHeight);
         return this;
     }
 

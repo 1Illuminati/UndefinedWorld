@@ -1,0 +1,14 @@
+name: UndefinedWorldEnchant
+version: 1.0-SNAPSHOT
+main: org.red.minecraft.uw.enchant.UndefinedWorldEnchantPlugin
+authors: [RedKiller]
+api-version: 26.1
+depend:
+- CommediaDellarte
+- UndefinedWorldCore
+
+commands:
+  u_enchant:
+    usage: "/u_enchant"
+    description: "인챈트 강화 GUI 열기"
+    permission: op

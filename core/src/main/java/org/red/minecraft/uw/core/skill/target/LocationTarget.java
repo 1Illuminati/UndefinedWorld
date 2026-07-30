@@ -3,6 +3,7 @@ package org.red.minecraft.uw.core.skill.target;
 import org.bukkit.Location;
 import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.Nullable;
+import org.red.minecraft.uw.core.UndefinedWorldCorePlugin;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -30,6 +31,18 @@ public record LocationTarget(Location center, int targetCount, double range, Bou
 
     @Override
     public Location[] getTargets(@Nullable Predicate<Location> predicate) {
+        // EntityTarget 과 동일한 방어 정책 — 월드가 없으면 좌표를 만들 수 없다
+        if (center.getWorld() == null) {
+            UndefinedWorldCorePlugin.sendLog("LocationTarget: center 의 월드가 없어 탐색을 건너뜀");
+            return new Location[0];
+        }
+
+        // range 가 무한대/NaN 이면 좌표가 전부 쓰레기값(블록 좌표 변환 시 Integer.MAX_VALUE)이 된다
+        if (type != SearchType.BOX && !Double.isFinite(range)) {
+            UndefinedWorldCorePlugin.sendLog("LocationTarget: range 가 유한하지 않아 탐색을 건너뜀 (range=" + range + ", type=" + type + ")");
+            return new Location[0];
+        }
+
         List<Location> locations = new ArrayList<>();
 
         // BOX/RANGE_BOX용 totalVolume 사전 계산
@@ -61,9 +74,9 @@ public record LocationTarget(Location center, int targetCount, double range, Bou
                     case RANGE_SQUARE -> {
                         Location loc = new Location(
                                 center.getWorld(),
-                                center.x() + RANDOM.nextDouble(-range, range),
+                                center.x() + randomBetween(-range, range),
                                 center.getY(),
-                                center.z() + RANDOM.nextDouble(-range, range)
+                                center.z() + randomBetween(-range, range)
                         ).toBlockLocation();
 
                         if ((predicate == null || predicate.test(loc)) && duplicationCheck(locations, loc)) {
@@ -78,9 +91,9 @@ public record LocationTarget(Location center, int targetCount, double range, Bou
 
                         Location loc = new Location(
                                 center.getWorld(),
-                                RANDOM.nextDouble(selectedBox.getMinX(), selectedBox.getMaxX()),
+                                randomBetween(selectedBox.getMinX(), selectedBox.getMaxX()),
                                 center.getY(),
-                                RANDOM.nextDouble(selectedBox.getMinZ(), selectedBox.getMaxZ())
+                                randomBetween(selectedBox.getMinZ(), selectedBox.getMaxZ())
                         ).toBlockLocation();
 
                         if ((predicate == null || predicate.test(loc)) && duplicationCheck(locations, loc)) {
@@ -114,8 +127,8 @@ public record LocationTarget(Location center, int targetCount, double range, Bou
                         double minZ = Math.max(selectedBox.getMinZ(), center.getZ() - range);
                         double maxZ = Math.min(selectedBox.getMaxZ(), center.getZ() + range);
 
-                        double randX = RANDOM.nextDouble(minX, maxX);
-                        double randZ = RANDOM.nextDouble(minZ, maxZ);
+                        double randX = randomBetween(minX, maxX);
+                        double randZ = randomBetween(minZ, maxZ);
 
                         double distX = randX - center.getX();
                         double distZ = randZ - center.getZ();
@@ -141,7 +154,14 @@ public record LocationTarget(Location center, int targetCount, double range, Bou
         return locations.toArray(new Location[0]);
     }
 
+    /**
+     * 넓이 가중 무작위 선택.
+     * <p>totalVolume 이 0 이하이거나 비유한이면(폭 0짜리 박스만 있는 경우 등)
+     * {@code nextDouble(bound)} 가 IllegalArgumentException 을 던지므로 균등 선택으로 폴백한다.
+     */
     private BoundingBox selectWeightedBox(List<BoundingBox> boxes, double totalVolume) {
+        if (!Double.isFinite(totalVolume) || totalVolume <= 0) return boxes.get(RANDOM.nextInt(boxes.size()));
+
         double rand = RANDOM.nextDouble(totalVolume);
         double cumulative = 0;
         for (BoundingBox b : boxes) {
@@ -152,6 +172,8 @@ public record LocationTarget(Location center, int targetCount, double range, Bou
     }
 
     private BoundingBox selectWeightedBox(BoundingBox[] boxes, double totalVolume) {
+        if (!Double.isFinite(totalVolume) || totalVolume <= 0) return boxes[RANDOM.nextInt(boxes.length)];
+
         double rand = RANDOM.nextDouble(totalVolume);
         double cumulative = 0;
         for (BoundingBox b : boxes) {
@@ -159,6 +181,17 @@ public record LocationTarget(Location center, int targetCount, double range, Bou
             if (rand <= cumulative) return b;
         }
         return boxes[boxes.length - 1]; // 부동소수점 오차 방어
+    }
+
+    /**
+     * {@code [min, max)} 구간의 무작위 값.
+     * <p>{@code RandomGenerator.nextDouble(origin, bound)} 는 {@code origin < bound} 를 요구한다.
+     * 폭 0인 박스, {@code range == 0}(-0.0 &lt; 0.0 은 false), 클램프로 역전된 구간에서 전부 예외가 나므로
+     * 구간이 성립하지 않으면 예외 대신 min 을 그대로 사용한다.
+     */
+    private static double randomBetween(double min, double max) {
+        if (!Double.isFinite(min) || !Double.isFinite(max) || min >= max) return min;
+        return RANDOM.nextDouble(min, max);
     }
 
     private boolean duplicationCheck(List<Location> locs, Location loc) {

@@ -40,6 +40,12 @@ public final class VamfirePostProcessor {
                 * (1 + multiply / 100)
                 * (1 - resistance / 100);
 
+        // NaN 은 어떤 비교에도 false 라 heal <= 0 을 통과한다.
+        // setHealth(NaN) 은 IllegalArgumentException 이라 흡혈 하나로 데미지 처리 전체가 중단된다.
+        if (!Double.isFinite(heal)) {
+            UndefinedWorldCorePlugin.sendLog("Vamfire 비정상 회복량(NaN/Infinity) 차단: " + heal + " (" + ctx + ")");
+            return;
+        }
         if (heal <= 0) return;
 
         attacker.setHealth(Math.min(attacker.getMaxHealth(), attacker.getHealth() + heal));

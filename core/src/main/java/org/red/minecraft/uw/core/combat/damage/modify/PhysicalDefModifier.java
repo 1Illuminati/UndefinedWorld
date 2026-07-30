@@ -20,6 +20,8 @@ public class PhysicalDefModifier implements DamageModifier {
         double finalRes = 1 - ((res - resReduce) / 100);
 
         ctx.setDamage((ctx.damage() - (finalDef > 0 ? finalDef : 0)) * finalRes);
+        UndefinedWorldCorePlugin.sendLog(String.format("PhysicalDef def:%f, defRe:%f, res:%f, resRe:%f, fDef:%f, fRes:%f",
+                def, defReduce, res, resReduce, finalDef, finalRes));
         UndefinedWorldCorePlugin.sendLog(ctx.toString());
     }
 }

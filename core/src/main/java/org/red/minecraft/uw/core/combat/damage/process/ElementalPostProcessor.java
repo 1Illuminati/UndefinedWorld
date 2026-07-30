@@ -60,7 +60,7 @@ public final class ElementalPostProcessor {
     // ── 파쇄(LAND) 상수 ────────────────────────────────
     /** 파쇄 지속시간 (틱) — todo 밸런스 확정 필요 (임시 5초, 재적용 시 갱신) */
     private static final long SHATTER_DURATION_TICKS = 100L;
-    // todo 파쇄 최대 중첩 수 명세 없음 (현재 무제한) — 밸런스 확정 필요
+    // 파쇄 최대 중첩(maxStack=10)은 BuffManager/ShatterDebuff 가 강제한다 — 여기서 상한을 두지 않는다
 
     private ElementalPostProcessor() {}
 
@@ -105,6 +105,12 @@ public final class ElementalPostProcessor {
      * 연쇄 데미지를 받은 적은 CHAIN_IMMUNE_MS 동안 연쇄 면역. (재귀 폭발 방지)
      */
     private static void chainDamage(DamageCTX ctx, EntityDamageEvent event) {
+        double chainDamage = event.getDamage() * CHAIN_DAMAGE_RATE;
+
+        // 데미지가 0(리스너가 무효화)이면 연쇄로 얻는 게 없는데 대상의 2초 연쇄 면역만 소모된다.
+        // NaN 도 여기서 걸린다 (NaN > 0 은 false)
+        if (!(chainDamage > 0)) return;
+
         A_LivingEntity defender = ctx.defender();
         Location center = defender.getLocation();
 
@@ -115,11 +121,19 @@ public final class ElementalPostProcessor {
         Entity[] targets = new EntityTarget(center, Integer.MAX_VALUE, CHAIN_RANGE, Target.SearchType.RANGE_CIRCLE)
                 .getTargets(filter);
 
-        double chainDamage = event.getDamage() * CHAIN_DAMAGE_RATE;
-
         for (Entity target : targets) {
+            // getTargets 의 면역 필터는 스트림 종료 시점에 한 번에 평가된 스냅샷이다.
+            // 루프 도중 재귀 연쇄가 뒤쪽 대상을 이미 때려 면역으로 만들 수 있으므로 때리기 직전에 다시 확인한다.
+            // (이 재확인이 없으면 대상이 2초 안에 연쇄 데미지를 두 번 받아 면역 규칙이 우회된다)
+            if (isChainImmune(target.getUniqueId())) continue;
+
             A_LivingEntity living = CommediaDellarte.getAEntity(target).getALivingEntity();
             if (living == null) continue;
+
+            // Faction.predicate(ENEMY)는 리빙 여부만 보고 생사는 보지 않는다.
+            // 같은 틱에 죽은 시체가 아직 월드에 남아 있으면 연쇄가 시체를 때려 setHealth(0)/피격연출이 다시 돈다.
+            // (VamfirePostProcessor 는 동일한 isDead 가드를 이미 갖고 있다)
+            if (living.isDead()) continue;
 
             // 면역을 먼저 걸어 연쇄 → 연쇄 재귀를 차단한다
             setChainImmune(target.getUniqueId());
@@ -152,13 +166,10 @@ public final class ElementalPostProcessor {
     // ──────────────────────────────────────────────────
 
     private static void processLand(DamageCTX ctx) {
-        BuffManager buffs = UndefinedWorldCore.getBuffManager();
-
-        // 기존 중첩 수 + 1 로 재적용 (BuffManager가 같은 타입을 교체하며 지속시간도 갱신)
-        var existing = buffs.getBuff(ctx.defender(), BuffType.SHATTER);
-        int stacks = existing == null ? 1 : existing.getBuff().context().level() + 1;
-
-        buffs.applyBuff(ctx.defender(), BuffType.SHATTER, casterContext(ctx, stacks), SHATTER_DURATION_TICKS, false);
+        // 중첩 누적은 BuffManager 담당이다 (새 레벨 = min(maxStack, 기존레벨 + 요청레벨), 파쇄 maxStack=10 확정).
+        // 호출부는 "이번에 추가할 양"만 넘긴다. 여기서 기존 레벨을 읽어 +1 하면 매니저 누적과 겹쳐 중첩이 두 배로 붙는다.
+        UndefinedWorldCore.getBuffManager()
+                .applyBuff(ctx.defender(), BuffType.SHATTER, casterContext(ctx, 1), SHATTER_DURATION_TICKS, false);
     }
 
     /** 공격자가 있으면 caster를 담은 BuffContext 생성 */

@@ -1,6 +1,7 @@
 package org.red.minecraft.uw.core.skill.cost;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class CostData {
@@ -21,8 +22,9 @@ public class CostData {
         costs.addAll(cost);
     }
 
+    /** 전체 비용 목록 (읽기 전용 뷰). 추가는 addCost로만 한다 — 상태 변경 위치를 한 곳에 고정한다. */
     public List<Cost> getCosts() {
-        return costs;
+        return Collections.unmodifiableList(costs);
     }
 
     public List<Cost<?>> getCost(CostType type) {

@@ -44,7 +44,12 @@ public record Stat(String name, Map<AttributeType, Double> map) implements Attri
     public static void configSet(ConfigurationSection section) {
         UndefinedWorldCorePlugin.sendLog("Stat set Start");
         for (String key : section.getKeys(false)) {
-            ConfigurationSection attSection = section.getConfigurationSection(key);
+            // 하위 attribute 섹션이 없으면(빈 스탯 정의) 원인을 알 수 있게 메시지를 붙여 즉시 실패시킨다
+            ConfigurationSection attSection = Objects.requireNonNull(
+                    section.getConfigurationSection(key),
+                    "StatSetting." + key + " 하위에 attribute 설정이 없습니다"
+            );
+
             Map<AttributeType, Double> attMap = new HashMap<>();
             for (String attKey : attSection.getKeys(false)) {
                 double value = attSection.getDouble(attKey);
@@ -63,5 +68,11 @@ public record Stat(String name, Map<AttributeType, Double> map) implements Attri
         FOC = defaultMap.get("FOC");
         KNO = defaultMap.get("KNO");
         SPI = defaultMap.get("SPI");
+
+        // 기본 스탯 키가 빠지면 위 static 참조가 null로 남아 나중에 엉뚱한 위치에서 NPE가 난다 → 설정 시점에 알린다
+        for (String required : new String[]{"STR", "AGI", "HEL", "WIS", "FOC", "KNO", "SPI"}) {
+            if (!defaultMap.containsKey(required))
+                UndefinedWorldCorePlugin.sendLog("StatSetting에 " + required + " 정의가 없습니다 (Stat." + required + " = null)");
+        }
     }
 }

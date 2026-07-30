@@ -27,7 +27,12 @@ public final class ResourceRegenTask implements Runnable {
     @Override
     public void run() {
         for (Player player : Bukkit.getOnlinePlayers()) {
-            regen(CommediaDellarte.getAPlayer(player));
+            // 한 명에서 터진 예외가 나머지 플레이어의 재생까지 막지 않도록 개별로 격리한다
+            try {
+                regen(CommediaDellarte.getAPlayer(player));
+            } catch (Exception e) {
+                UndefinedWorldCorePlugin.sendLog("Resource regen failed: " + player.getName() + " / " + e);
+            }
         }
     }
 
@@ -37,7 +42,9 @@ public final class ResourceRegenTask implements Runnable {
         double healthRegen = regenValue(helper, AttributeType.HEALTH_REGEN, AttributeType.HEALTH_REGEN_REDUCE);
         if (healthRegen > 0 && !player.isDead()) {
             double max = player.getMaxHealth();
-            player.setHealth(Math.min(max, player.getHealth() + healthRegen));
+            // setHealth는 범위를 벗어난 값에 예외를 던지므로 0~최대체력으로 자른다.
+            // 최대체력이 0 이하인 비정상 상태에서는 회복 대신 아무것도 하지 않는다 (0으로 잘려 죽는 것 방지)
+            if (max > 0) player.setHealth(Math.clamp(player.getHealth() + healthRegen, 0, max));
         }
 
         double manaRegen = regenValue(helper, AttributeType.MANA_REGEN, AttributeType.MANA_REGEN_REDUCE);
@@ -47,7 +54,16 @@ public final class ResourceRegenTask implements Runnable {
         if (staminaRegen > 0) helper.addStamina(staminaRegen);
     }
 
+    /**
+     * 재생량 = REGEN - REGEN_REDUCE.
+     * attribute 값이 NaN/무한이면 이후 setHealth/자원 저장이 오염되므로 0으로 처리한다.
+     */
     private double regenValue(PlayerHelper helper, AttributeType regen, AttributeType reduce) {
-        return helper.getAttributeValue(regen) - helper.getAttributeValue(reduce);
+        double value = helper.getAttributeValue(regen) - helper.getAttributeValue(reduce);
+        if (!Double.isFinite(value)) {
+            UndefinedWorldCorePlugin.sendLog("Regen value is not finite, treated as 0: " + regen.name());
+            return 0;
+        }
+        return value;
     }
 }

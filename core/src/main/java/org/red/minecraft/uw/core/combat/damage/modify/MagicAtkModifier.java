@@ -1,6 +1,7 @@
 package org.red.minecraft.uw.core.combat.damage.modify;
 
 import org.red.minecraft.uw.core.UndefinedWorldCore;
+import org.red.minecraft.uw.core.UndefinedWorldCorePlugin;
 import org.red.minecraft.uw.core.attribute.AttributeManager;
 import org.red.minecraft.uw.core.attribute.AttributeType;
 import org.red.minecraft.uw.core.combat.damage.DamageCTX;
@@ -20,5 +21,8 @@ public class MagicAtkModifier implements DamageModifier{
 
         final double result = (finalAtk * finalMul * ctx.scale());
         ctx.setDamage(result);
+        UndefinedWorldCorePlugin.sendLog(String.format("MagicAtk atk:%f, atkRe:%f, mul:%f, mulRe:%f, fAtk:%f, fMul:%f, result:%f",
+                atk, atkReduce, mul, mulReduce, finalAtk, finalMul, result));
+        UndefinedWorldCorePlugin.sendLog(ctx.toString());
     }
 }

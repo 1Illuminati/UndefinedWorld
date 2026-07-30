@@ -11,6 +11,7 @@ import org.red.minecraft.uw.core.player.PlayerHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 public class StatCommand extends Command {
@@ -35,7 +36,7 @@ public class StatCommand extends Command {
         A_Player target = CommediaDellarte.getAPlayer(playerName);
         if (target == null) {
             commandSender.sendMessage("Player " + playerName + " doesn't exist");
-            return false;
+            return true; // false를 반환하면 안내 메시지 위에 usage가 겹쳐 출력된다
         }
 
         PlayerHelper helper = new PlayerHelper(target);
@@ -125,6 +126,9 @@ public class StatCommand extends Command {
             return filterByPrefix(playerNames, strings[1]);
         }
 
+        // apply는 statType/value 인자를 쓰지 않으므로 후보를 제안하지 않는다
+        if (strings[0].equalsIgnoreCase("apply")) return List.of();
+
         if (strings.length == 3) {
             List<String> statTypes = new ArrayList<>(Stat.statKeys()); // Stat 전체 이름 목록 반환 메서드 가정
             statTypes.add("statPoint");
@@ -139,9 +143,9 @@ public class StatCommand extends Command {
     }
 
     private List<String> filterByPrefix(List<String> candidates, String prefix) {
-        String lower = prefix.toLowerCase();
+        String lower = prefix.toLowerCase(Locale.ROOT);
         return candidates.stream()
-                .filter(c -> c.toLowerCase().startsWith(lower))
+                .filter(c -> c.toLowerCase(Locale.ROOT).startsWith(lower))
                 .collect(Collectors.toList());
     }
 }

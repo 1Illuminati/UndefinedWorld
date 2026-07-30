@@ -1,6 +1,7 @@
 package org.red.minecraft.uw.core.combat.buff;
 
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -20,7 +21,11 @@ public class BuffLifecycleListener extends A_Listener {
         UndefinedWorldCore.getBuffManager().onDeath(CommediaDellarte.getAEntity(event.getEntity()));
     }
 
-    @EventHandler
+    /**
+     * 보류 스냅샷을 플레이어 데이터에 쓰기 때문에, 데이터가 저장/언로드되기 전에 먼저 처리해야 한다.
+     * 그래서 가장 이른 우선순위로 받는다.
+     */
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerQuit(PlayerQuitEvent event) {
         UndefinedWorldCore.getBuffManager().onQuit(CommediaDellarte.getAPlayer(event.getPlayer()));
     }

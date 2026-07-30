@@ -23,7 +23,7 @@ public enum BuffType implements ConfigurationSerializable {
     SILENCE(SilenceDebuff::new),
     /** 파쇄 (땅속성 디버프) — 중첩형 땅속성 피해 증가, ShatterDebuff 참조 */
     SHATTER(ShatterDebuff::new),
-    /** 무적 — 캐스팅 취소 예외 마커, InvincibleBuff 참조 */
+    /** 무적 — 데미지 무효 + 캐스팅 취소 예외, InvincibleBuff 참조 */
     INVINCIBLE(InvincibleBuff::new);
 
     private final Function<BuffContext, Buff> factory;

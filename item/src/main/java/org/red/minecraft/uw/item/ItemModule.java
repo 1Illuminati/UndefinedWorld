@@ -18,13 +18,16 @@ public class ItemModule implements IItemModule {
         this.factory = factory;
     }
 
+    // core 전체가 이 창구로 아이템을 조회하므로 빈 입력은 여기서 걸러 호출부 방어 부담을 줄인다
     @Override
     public @Nullable U_Item getItem(String itemCode) {
+        if (itemCode == null || itemCode.isEmpty()) return null;
         return factory.getMechanic(itemCode);
     }
 
     @Override
     public @Nullable U_Item getItem(ItemStack itemStack) {
+        if (itemStack == null || itemStack.isEmpty()) return null;
         return factory.getMechanic(itemStack);
     }
 }

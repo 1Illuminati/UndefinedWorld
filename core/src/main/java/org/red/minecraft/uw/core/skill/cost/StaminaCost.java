@@ -58,7 +58,9 @@ public class StaminaCost implements Cost<Double> {
         double sumCost = 0;
 
         for (Cost<Double> cost : costs) {
-            if (!(cost instanceof StaminaCost)) throw new IllegalArgumentException();//todo
+            if (!(cost instanceof StaminaCost))
+                throw new IllegalArgumentException("StaminaCost.sumCosts got " + cost.getClass().getSimpleName()
+                        + " (type:" + cost.getType() + ")");
             sumCost += cost.getValue();
         }
 

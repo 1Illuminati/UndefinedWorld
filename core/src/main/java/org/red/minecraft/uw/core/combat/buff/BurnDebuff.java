@@ -23,6 +23,7 @@ public class BurnDebuff implements Buff {
 
     @Override public BuffContext context() { return ctx; }
     @Override public BuffType type()       { return BuffType.BURN; }
+    @Override public String getName()      { return type().name(); }
     @Override public int tickCount()       { return 20; } // todo 도트 주기 밸런스 확정 필요 (임시 1초)
 
     @Override
@@ -31,8 +32,10 @@ public class BurnDebuff implements Buff {
 
         double damage = living.getMaxHealth() * HEALTH_RATE;
 
-        if (ctx.caster() != null) {
-            CombatManager.damage(ctx.caster(), living, DamageType.BURNING, ElementalType.FIRE, damage);
+        // caster는 화상 지속 중에 죽거나 디스폰될 수 있으므로 유효할 때만 공격자로 사용한다 (PoisonBuff와 동일 규약)
+        A_Entity caster = ctx.caster();
+        if (caster != null && caster.isValid()) {
+            CombatManager.damage(caster, living, DamageType.BURNING, ElementalType.FIRE, damage);
         } else {
             CombatManager.damage(living, DamageType.BURNING, ElementalType.FIRE, damage);
         }

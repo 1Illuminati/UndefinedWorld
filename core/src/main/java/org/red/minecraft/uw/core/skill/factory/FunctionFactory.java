@@ -19,9 +19,18 @@ public class FunctionFactory<T> implements SkillFactory<T> {
         this.function = function;
     }
 
+    /**
+     * 파싱 실패 시 어떤 팩토리/어떤 설정 경로에서 터졌는지 알 수 없으면 원인 추적이 불가능하므로
+     * (예: {@code BuffType.valueOf} 실패 메시지에는 기어 정보가 전혀 없다) 컨텍스트를 붙여 재던진다.
+     */
     @Override
     public T create(ConfigurationSection section) {
-        return function.apply(section);
+        try {
+            return function.apply(section);
+        } catch (RuntimeException exception) {
+            throw new IllegalArgumentException("Failed to create '" + id + "' from section '"
+                    + (section == null ? "null" : section.getCurrentPath()) + "': " + exception, exception);
+        }
     }
 
     @Override

@@ -8,9 +8,17 @@ depend:
 - PlaceholderAPI
 
 commands:
+  # 관리/테스트용: 타인의 스탯을 변경할 수 있으므로 권한 필요
   stat:
+    usage: "/stat <set|get|add|apply> <player> [statType] [value]"
+    description: "플레이어 스탯 조회 및 변경"
+    permission: op
   equipment:
+    usage: "/equipment"
+    description: "장비 GUI 열기"
     aliases: [equip, eq]
+  # cast/debug 는 코드에서 isOp 로 막는다. 명령어 전체에 permission 을 걸면
+  # 일반 유저가 제작/장착을 못 하게 되므로 걸지 않는다.
   skill:
-  skillcraft:
-    aliases: [sc]
+    usage: "/skill <list|slots|equip|craft <이름>|cast|debug>"
+    description: "스킬 아이템 조회·제작·장착 (equip은 장착 GUI, cast/debug는 op 전용)"

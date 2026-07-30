@@ -21,6 +21,8 @@ import java.util.UUID;
  * 접속 후 첫 스캔에서도 재계산되므로 저장된 GUI 장비의 접속 시 적용도 여기서 겸한다.
  *
  * todo 왼손 서브무기 확장: 스캔 대상을 슬롯 목록(주손/왼손)으로 일반화 (서브무기 설계 확정 후)
+ * todo 변경 감지 기준이 아이템 코드뿐이라 같은 코드의 다른 상태(강화/인챈트 등)는 재계산되지 않는다.
+ *      아이템별 개별 attribute(강화 수치 등) 도입 시 비교 기준 확정 필요.
  */
 public final class WeaponScanTask implements Runnable {
 
@@ -41,15 +43,25 @@ public final class WeaponScanTask implements Runnable {
     @Override
     public void run() {
         for (Player player : Bukkit.getOnlinePlayers()) {
-            UUID id = player.getUniqueId();
-            String code = resolveWeaponCode(player.getInventory().getItemInMainHand());
-
-            // 접속 후 첫 스캔(캐시 없음)이거나 무기가 바뀐 경우에만 재계산
-            if (lastWeaponCode.containsKey(id) && Objects.equals(code, lastWeaponCode.get(id))) continue;
-
-            lastWeaponCode.put(id, code);
-            EquipmentManager.applyEquipmentAttributes(CommediaDellarte.getAPlayer(player));
+            // 한 명에서 터진 예외가 나머지 플레이어 스캔까지 막지 않도록 개별로 격리한다
+            try {
+                scan(player);
+            } catch (Exception e) {
+                UndefinedWorldCorePlugin.sendLog("Weapon scan failed: " + player.getName() + " / " + e);
+            }
         }
+    }
+
+    private void scan(Player player) {
+        UUID id = player.getUniqueId();
+        String code = resolveWeaponCode(player.getInventory().getItemInMainHand());
+
+        // 접속 후 첫 스캔(캐시 없음)이거나 무기가 바뀐 경우에만 재계산
+        if (lastWeaponCode.containsKey(id) && Objects.equals(code, lastWeaponCode.get(id))) return;
+
+        // 재계산 실패 시에도 매 주기 재시도(로그 폭탄)를 막기 위해 캐시를 먼저 갱신한다
+        lastWeaponCode.put(id, code);
+        EquipmentManager.applyEquipmentAttributes(CommediaDellarte.getAPlayer(player));
     }
 
     @Nullable

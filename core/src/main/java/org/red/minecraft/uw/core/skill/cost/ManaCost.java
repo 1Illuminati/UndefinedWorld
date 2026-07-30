@@ -58,7 +58,9 @@ public class ManaCost implements Cost<Double> {
         double sumCost = 0;
 
         for (Cost<Double> cost : costs) {
-            if (!(cost instanceof ManaCost)) throw new IllegalArgumentException();//todo
+            if (!(cost instanceof ManaCost))
+                throw new IllegalArgumentException("ManaCost.sumCosts got " + cost.getClass().getSimpleName()
+                        + " (type:" + cost.getType() + ")");
             sumCost += cost.getValue();
         }
 

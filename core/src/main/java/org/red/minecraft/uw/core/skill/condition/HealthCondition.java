@@ -17,6 +17,7 @@ public record HealthCondition(double ratio, boolean above) implements Condition 
         A_Entity caster = ctx.getCTX(CTXType.CASTER);
         A_LivingEntity living = caster.getALivingEntity();
         if (living == null || living.isDead()) return false;
+        if (living.getMaxHealth() <= 0) return false; // 0 나눗셈(NaN) 방지
 
         double current = living.getHealth() / living.getMaxHealth();
         return above ? current >= ratio : current <= ratio;

@@ -1,6 +1,7 @@
 package org.red.minecraft.uw.core.combat.damage.modify;
 
 import org.red.minecraft.uw.core.UndefinedWorldCore;
+import org.red.minecraft.uw.core.UndefinedWorldCorePlugin;
 import org.red.minecraft.uw.core.attribute.AttributeManager;
 import org.red.minecraft.uw.core.attribute.AttributeType;
 import org.red.minecraft.uw.core.combat.damage.DamageCTX;
@@ -19,5 +20,8 @@ public class MagicDefModifier implements DamageModifier {
         double finalRes = 1 - ((res - resReduce) / 100);
 
         ctx.setDamage((ctx.damage() - (finalDef > 0 ? finalDef : 0)) * finalRes);
+        UndefinedWorldCorePlugin.sendLog(String.format("MagicDef def:%f, defRe:%f, res:%f, resRe:%f, fDef:%f, fRes:%f",
+                def, defReduce, res, resReduce, finalDef, finalRes));
+        UndefinedWorldCorePlugin.sendLog(ctx.toString());
     }
 }
